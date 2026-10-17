@@ -10,6 +10,7 @@
 <!-- Styles communs : à modifier une seule fois pour toutes les pages -->
 <link rel="stylesheet" href="../../../commun/base.css">
 <link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
+<link rel="stylesheet" href="../../../commun/parcours.css">
 <style>
 /* Ajouts du module méthode : mêmes jetons que l'atelier */
 .steps{margin:0;padding-left:1.4rem;display:grid;gap:8px}
@@ -39,12 +40,19 @@ textarea{font:inherit;padding:.4rem .6rem;border:1.5px solid var(--line);border-
 <body>
 <header class="board">
   <div class="board-in">
+    <nav aria-label="Parcours du cours">
+      <ol class="parcours">
+        <li><a class="som" href="index.html">Sommaire</a></li>
+        <li><a href="Preparer-ton-atelier.html"><b>1</b><span class="t">Prépare ton atelier</span></a></li>
+        <li><a href="Atelier-Arduino-ESP32.html"><b>2</b><span class="t">Atelier Arduino &amp; ESP32</span></a></li>
+        <li><a href="Apprivoiser-un-composant.html" aria-current="page"><b>3</b><span class="t">Apprivoiser un composant</span></a></li>
+      </ol>
+    </nav>
     <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="board-top">
       <div>
         <p class="silk">Design PEI 5 · Niveau 1 · Méthode</p>
         <h1>Apprivoiser un <span>composant</span></h1>
-        <p style="margin-top:6px"><a class="back" href="Atelier-Arduino-ESP32.html">← Retour à l'atelier Arduino &amp; ESP32</a></p>
       </div>
       <div class="lang" role="group" aria-label="Langage affiché">
         <button id="lang-cpp" data-lang="cpp" aria-pressed="false">C/C++</button>
@@ -451,7 +459,7 @@ while True:
   <div class="panel no-print" style="background:var(--copper-soft);border-color:var(--copper)">
     <p class="label" style="color:var(--copper-ink)">Et maintenant</p>
     <p>Applique la méthode à la photorésistance de la mission « lampe éco-intelligente » de l'atelier, puis à chaque capteur du niveau 2.</p>
-    <div class="row"><a class="btn copper" href="Atelier-Arduino-ESP32.html" style="text-decoration:none">Ouvrir l'atelier Arduino &amp; ESP32</a></div>
+    <div class="row"><a class="btn copper" href="Atelier-Arduino-ESP32.html" style="text-decoration:none">Ouvrir l'atelier Arduino &amp; ESP32</a><a class="btn ghost" href="index.html" style="text-decoration:none">Retour au sommaire</a></div>
   </div>
 </section>
 

@@ -10,10 +10,19 @@
 <!-- Styles communs : à modifier une seule fois pour toutes les pages -->
 <link rel="stylesheet" href="../../../commun/base.css">
 <link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
+<link rel="stylesheet" href="../../../commun/parcours.css">
 </head>
 <body>
 <header class="board">
   <div class="board-in">
+    <nav aria-label="Parcours du cours">
+      <ol class="parcours">
+        <li><a class="som" href="index.html">Sommaire</a></li>
+        <li><a href="Preparer-ton-atelier.html"><b>1</b><span class="t">Prépare ton atelier</span></a></li>
+        <li><a href="Atelier-Arduino-ESP32.html" aria-current="page"><b>2</b><span class="t">Atelier Arduino &amp; ESP32</span></a></li>
+        <li><a href="Apprivoiser-un-composant.html"><b>3</b><span class="t">Apprivoiser un composant</span></a></li>
+      </ol>
+    </nav>
     <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="board-top">
       <div>
@@ -534,6 +543,8 @@ while True:
   <div class="panel" style="background:var(--copper-soft);border-color:var(--copper)">
     <p class="label" style="color:var(--copper-ink)">Prochaine étape · Niveau 2</p>
     <p>Capteurs et actionneurs : conditions <code>if</code>, boutons, potentiomètre, servomoteur et buzzer, toujours en C/C++ et en Python.</p>
+    <p>Avant chaque nouveau capteur, utilise la méthode « Apprivoiser un composant ».</p>
+    <div class="row"><a class="btn copper" href="Apprivoiser-un-composant.html" style="text-decoration:none">Ouvrir « Apprivoiser un composant »</a></div>
   </div>
 </section>
 

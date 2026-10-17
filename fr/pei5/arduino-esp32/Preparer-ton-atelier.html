@@ -10,6 +10,7 @@
 <!-- Styles communs : à modifier une seule fois pour toutes les pages -->
 <link rel="stylesheet" href="../../../commun/base.css">
 <link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
+<link rel="stylesheet" href="../../../commun/parcours.css">
 <style>
 /* Ajouts du module 0 : mêmes jetons que l'atelier */
 .ets.e4{grid-template-columns:1fr auto 1fr auto 1fr auto 1fr}
@@ -46,12 +47,19 @@ details.panel summary .pill{margin-left:6px}
 <body>
 <header class="board">
   <div class="board-in">
+    <nav aria-label="Parcours du cours">
+      <ol class="parcours">
+        <li><a class="som" href="index.html">Sommaire</a></li>
+        <li><a href="Preparer-ton-atelier.html" aria-current="page"><b>1</b><span class="t">Prépare ton atelier</span></a></li>
+        <li><a href="Atelier-Arduino-ESP32.html"><b>2</b><span class="t">Atelier Arduino &amp; ESP32</span></a></li>
+        <li><a href="Apprivoiser-un-composant.html"><b>3</b><span class="t">Apprivoiser un composant</span></a></li>
+      </ol>
+    </nav>
     <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="board-top">
       <div>
         <p class="silk">Design PEI 5 · Niveau 1 · Module 0</p>
         <h1>Prépare ton <span>atelier</span></h1>
-        <p style="margin-top:6px"><a class="back" href="Atelier-Arduino-ESP32.html">← Retour à l'atelier Arduino &amp; ESP32</a></p>
       </div>
       <div class="lang" role="group" aria-label="Langage affiché">
         <button id="lang-cpp" data-lang="cpp" aria-pressed="false">C/C++</button>

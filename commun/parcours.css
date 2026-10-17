@@ -1,0 +1,11 @@
+/* Fil de parcours : relie les pages d'un même site (dans le bandeau PCB) */
+.parcours{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:var(--f-mono);font-size:.78rem;margin:0;padding:0;list-style:none}
+.parcours li{display:flex;align-items:center;gap:6px}
+.parcours li+li::before{content:"";width:16px;height:2px;background:var(--silk);opacity:.6}
+.parcours a{display:inline-flex;align-items:center;gap:6px;color:var(--pcb-ink);text-decoration:none;border:1px solid var(--silk);border-radius:999px;padding:.15rem .7rem .15rem .2rem;opacity:.85}
+.parcours a b{width:1.35rem;height:1.35rem;border-radius:50%;display:grid;place-items:center;background:var(--pcb-2);border:1.5px solid var(--silk);font-weight:600}
+.parcours a.som{padding-left:.7rem}
+.parcours a:hover{opacity:1;border-color:var(--copper)}
+.parcours a[aria-current="page"]{background:var(--pcb-ink);color:var(--pcb);opacity:1;font-weight:600}
+.parcours a[aria-current="page"] b{background:var(--copper);border-color:var(--copper);color:#fff}
+@media (max-width:640px){.parcours a:not([aria-current]) .t{display:none}.parcours a:not([aria-current]):not(.som){padding-right:.2rem}}

@@ -2,29 +2,92 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Arduino &amp; ESP32 · Design PEI 5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<!-- Styles communs : à modifier une seule fois pour toutes les pages -->
 <link rel="stylesheet" href="../../../commun/base.css">
 <link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
-<link rel="stylesheet" href="../../../commun/sommaire.css">
+<link rel="stylesheet" href="../../../commun/parcours.css">
+<style>
+/* Page de liaison : les trois pages reliées par une piste de cuivre */
+.hub{max-width:860px;margin:0 auto;padding:28px 16px 56px;display:grid;gap:22px}
+.circuit{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:e}
+.circuit li{counter-increment:e;display:grid;grid-template-columns:48px minmax(0,1fr);gap:16px}
+.circuit .via{position:relative;display:flex;justify-content:center}
+.circuit .via::before{content:"";position:absolute;top:0;bottom:0;width:4px;background:var(--copper);opacity:.75}
+.circuit li:first-child .via::before{top:28px}
+.circuit li:last-child .via::before{bottom:auto;height:28px}
+.circuit .via span{position:relative;margin-top:8px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--pcb);color:var(--pcb-ink);border:3px solid var(--copper);font-family:var(--f-mono);font-weight:600}
+.circuit .via span::before{content:counter(e)}
+.circuit a.card{display:grid;gap:6px;margin-bottom:16px;padding:16px 18px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);color:inherit;text-decoration:none;transition:border-color .2s,transform .2s}
+.circuit a.card:hover{border-color:var(--copper);transform:translateX(3px)}
+.circuit .card b{font-family:var(--f-display);font-size:1.25rem}
+.circuit .card .etq{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--copper)}
+.circuit .card .tags{display:flex;gap:6px;flex-wrap:wrap}
+.circuit .card .tags i{font-style:normal;font-size:.82rem;border:1px solid var(--line);border-radius:99px;padding:0 .6rem;color:var(--muted)}
+.circuit .card .go{font-weight:700;color:var(--copper)}
+.tip{border-left:4px solid var(--copper);background:var(--copper-soft);border-radius:0 var(--r) var(--r) 0;padding:12px 16px}
+</style>
 </head>
 <body>
 <header class="board">
   <div class="board-in">
-    <p class="silk">Design PEI 5 · Niveau 1 · Découverte</p>
-    <h1>Arduino <span>&amp;</span> ESP32</h1>
+    <nav aria-label="Parcours du cours">
+      <ol class="parcours">
+        <li><a class="som" href="index.html" aria-current="page">Sommaire</a></li>
+        <li><a href="Preparer-ton-atelier.html"><b>1</b><span class="t">Prépare ton atelier</span></a></li>
+        <li><a href="Atelier-Arduino-ESP32.html"><b>2</b><span class="t">Atelier Arduino &amp; ESP32</span></a></li>
+        <li><a href="Apprivoiser-un-composant.html"><b>3</b><span class="t">Apprivoiser un composant</span></a></li>
+      </ol>
+    </nav>
+    <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="board-top">
+      <div>
+        <p class="silk">Design PEI 5 · Niveau 1 · Découverte</p>
+        <h1>Arduino <span>&amp;</span> ESP32</h1>
+      </div>
+    </div>
   </div>
 </header>
-<main class="sommaire">
-  <p class="lead">Trois étapes, dans l'ordre :</p>
-  <ol class="etapes">
-    <li><a href="Preparer-ton-atelier.html"><b>Prépare ton atelier</b><span>Module 0 : choisir son logiciel, l'installer, brancher sa carte et ranger son travail.</span></a></li>
-    <li><a href="Atelier-Arduino-ESP32.html"><b>Atelier Arduino &amp; ESP32</b><span>Comment une carte perçoit le monde, réfléchit et te parle.</span></a></li>
-    <li><a href="Apprivoiser-un-composant.html"><b>Apprivoiser un composant</b><span>Comprendre un capteur, trouver sa datasheet, le brancher, le tester, puis l'intégrer.</span></a></li>
+
+<main class="hub">
+  <p class="lead">Trois étapes reliées comme les pistes d'un circuit : suis-les dans l'ordre. Tu peux passer d'une page à l'autre à tout moment grâce au fil en haut de chaque page.</p>
+  <ol class="circuit">
+    <li>
+      <div class="via" aria-hidden="true"><span></span></div>
+      <a class="card" href="Preparer-ton-atelier.html">
+        <span class="etq">Étape 1 · Module 0</span>
+        <b>Prépare ton atelier</b>
+        <span>Choisir son logiciel, l'installer, brancher sa carte et ranger son travail.</span>
+        <span class="tags"><i>Simulateur</i><i>IDE Arduino ou Thonny</i><i>Dépannage</i></span>
+        <span class="go">Commencer ici →</span>
+      </a>
+    </li>
+    <li>
+      <div class="via" aria-hidden="true"><span></span></div>
+      <a class="card" href="Atelier-Arduino-ESP32.html">
+        <span class="etq">Étape 2 · Découverte</span>
+        <b>Atelier Arduino &amp; ESP32</b>
+        <span>Comment une carte perçoit le monde, réfléchit et te parle : entrées, traitement, sorties.</span>
+        <span class="tags"><i>LED</i><i>Capteurs</i><i>C/C++ et Python</i></span>
+        <span class="go">Ouvrir l'atelier →</span>
+      </a>
+    </li>
+    <li>
+      <div class="via" aria-hidden="true"><span></span></div>
+      <a class="card" href="Apprivoiser-un-composant.html">
+        <span class="etq">Étape 3 · Méthode</span>
+        <b>Apprivoiser un composant</b>
+        <span>Comprendre un capteur, trouver sa datasheet, le brancher, le tester seul, puis l'intégrer.</span>
+        <span class="tags"><i>Datasheet</i><i>Branchement</i><i>Test</i></span>
+        <span class="go">Découvrir la méthode →</span>
+      </a>
+    </li>
   </ol>
+  <p class="tip">Ta progression est gardée sur chaque page : tu peux t'arrêter et reprendre plus tard au même endroit, sur le même ordinateur.</p>
 </main>
 </body>
 </html>

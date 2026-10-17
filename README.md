@@ -9,6 +9,7 @@ commun/                    styles partagés (modifier ici = modifier partout)
   base.css                 réinitialisation commune
   themes/circuit-imprime.css   thème des sites Arduino & ESP32
   sommaire.css             pages d'accueil et sommaires
+  parcours.css             fil qui relie les pages d'un même site
 fr/<niveau>/<site>/        une page HTML par widget Google Sites
   index.html               sommaire du site
   brouillon/               jamais publié
