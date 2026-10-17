@@ -20,6 +20,14 @@ jobs:
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Vérifier qu'aucune adresse de l'école n'est publiée
+        # Sens unique : Google Sites pointe vers GitHub, jamais l'inverse
+        run: |
+          if grep -rniE 'sites\.google\.com|docs\.google\.com|drive\.google\.com|classroom\.google\.com|arc-en-ciel\.org' \
+               --include='*.html' --include='*.css' --include='*.js' --exclude-dir=brouillon --exclude-dir=.git .; then
+            echo "::error::Une adresse de l'école apparaît ci-dessus. Retire-la, puis enregistre à nouveau."
+            exit 1
+          fi
       - name: Préparer les fichiers publics
         run: |
           mkdir _site

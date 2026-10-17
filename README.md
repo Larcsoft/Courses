@@ -36,6 +36,13 @@ inventaire.csv             quelle page va dans quel Google Site
 
 Ajuster ensuite la hauteur du bloc dans l'éditeur.
 
+## Règle de sens unique (école → GitHub)
+
+- Google Sites est la porte d'entrée des élèves : il intègre les pages GitHub (Intégrer > Par URL).
+- Les pages de ce dépôt public ne contiennent jamais d'adresse de l'école (Google Sites, Drive, Docs, Classroom, arc-en-ciel.org) ni de données d'élèves.
+  La publication s'arrête toute seule si une de ces adresses apparaît.
+- Intégrée dans Google Sites, une page cache son fil « Sommaire 1 2 3 » : le menu de Sites prend le relais.
+
 ## Au quotidien
 
 - Modifier une page : ouvrir le fichier sur github.com, crayon ✏️, *Commit changes*. En ligne en 1 à 2 minutes.

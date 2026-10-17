@@ -9,3 +9,5 @@
 .parcours a[aria-current="page"]{background:var(--pcb-ink);color:var(--pcb);opacity:1;font-weight:600}
 .parcours a[aria-current="page"] b{background:var(--copper);border-color:var(--copper);color:#fff}
 @media (max-width:640px){.parcours a:not([aria-current]) .t{display:none}.parcours a:not([aria-current]):not(.som){padding-right:.2rem}}
+/* Mode intégré (page affichée dans Google Sites) : le menu de Sites remplace le fil */
+.integre nav.fil{display:none}
