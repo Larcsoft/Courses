@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prépare ton atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<!-- Styles communs : à modifier une seule fois pour toutes les pages -->
+<link rel="stylesheet" href="../../../commun/base.css">
+<link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
+<style>
+/* Ajouts du module 0 : mêmes jetons que l'atelier */
+.ets.e4{grid-template-columns:1fr auto 1fr auto 1fr auto 1fr}
+@media (max-width:760px){.ets.e4{grid-template-columns:1fr}.ets.e4 .arrow{transform:rotate(90deg);justify-self:center}}
+.steps{margin:0;padding-left:1.4rem;display:grid;gap:8px}
+.steps li::marker{font-family:var(--f-mono);color:var(--copper);font-weight:600}
+.tree{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:.84rem;line-height:1.7;overflow-x:auto;white-space:pre}
+.tree b{color:var(--copper)}
+.choice{display:grid;gap:8px}
+.choice .tabs button{padding:.55rem 1rem}
+.result{border:2px solid var(--ok);background:var(--ok-soft);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.result.bad{border-color:var(--bad);background:var(--bad-soft)}
+.result ol{margin:0;padding-left:1.3rem;display:grid;gap:6px}
+.result ol button{background:none;border:0;padding:0;color:var(--copper);text-decoration:underline;font-weight:700}
+.kbd{font-family:var(--f-mono);font-size:.82em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--paper)}
+.repl-in{display:flex;gap:8px;flex-wrap:wrap}
+.repl-in input{flex:1 1 220px;font-family:var(--f-mono)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font-family:var(--f-mono);font-size:.8rem;border:1.5px solid var(--line);background:var(--paper);border-radius:6px;padding:.2rem .55rem}
+.chips button:hover{border-color:var(--copper)}
+.monitor .err{color:#F3A28F}
+.monitor .in{color:var(--code-ink)}
+details.panel summary{cursor:pointer}
+details.panel summary .pill{margin-left:6px}
+.trouble{display:grid;gap:10px}
+.trouble details[hidden]{display:none}
+.sym{font-family:var(--f-mono);font-size:.86rem}
+.tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tag{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:99px;padding:.05rem .5rem;color:var(--muted)}
+.tabs button[aria-pressed="true"]{border-color:var(--copper);background:var(--copper-soft);color:var(--copper-ink)}
+.board-top a.back{color:var(--pcb-ink);font-size:.86rem;text-decoration:none;border-bottom:1px solid var(--silk)}
+</style>
+</head>
+<body>
+<header class="board">
+  <div class="board-in">
+    <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="board-top">
+      <div>
+        <p class="silk">Design PEI 5 · Niveau 1 · Module 0</p>
+        <h1>Prépare ton <span>atelier</span></h1>
+        <p style="margin-top:6px"><a class="back" href="Atelier-Arduino-ESP32.html">← Retour à l'atelier Arduino &amp; ESP32</a></p>
+      </div>
+      <div class="lang" role="group" aria-label="Langage affiché">
+        <button id="lang-cpp" data-lang="cpp" aria-pressed="false">C/C++</button>
+        <button id="lang-both" data-lang="both" aria-pressed="true">Les deux</button>
+        <button id="lang-py" data-lang="py" aria-pressed="false">Python</button>
+      </div>
+    </div>
+    <div class="meter"><div class="bar" aria-hidden="true"><b id="meter-bar"></b></div><span id="meter-txt">0 / 8 étapes terminées</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="rail" id="rail" aria-label="Étapes de préparation"></nav>
+  <main id="main">
+
+<!-- ================= ACCUEIL ================= -->
+<section class="mod" id="accueil" data-title="Bienvenue">
+  <p class="eyebrow">Avant le module 1</p>
+  <h2>Un espace de travail prêt en une séance</h2>
+  <p class="lead">Avant de faire clignoter ta première LED, il faut des outils qui marchent. Ce module 0 t'aide à choisir ton logiciel, à l'installer, à brancher ta carte et à ranger ton travail, que tu codes en <b>C/C++</b> ou en <b>Python</b>.</p>
+  <div class="grid2">
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">À la fin du module 0, tu auras</p>
+      <div class="prose"><ul>
+        <li>essayé un <b>simulateur</b> pour coder sans matériel ;</li>
+        <li>installé <b>un ou deux logiciels</b>, pas plus ;</li>
+        <li>vu ta carte apparaître sur l'ordinateur et ta LED clignoter ;</li>
+        <li>un <b>dossier rangé</b> pour tous les programmes de l'atelier ;</li>
+        <li>une fiche pour te dépanner seul quand ça bloque.</li>
+      </ul></div>
+    </div>
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">Ce qu'il te faut</p>
+      <div class="prose"><ul>
+        <li>un ordinateur <b>Windows, macOS ou Linux</b> ;</li>
+        <li>une carte <b>Arduino Uno</b> ou <b>ESP32 DevKit</b>, si tu en as une ;</li>
+        <li>un câble USB qui transporte des <b>données</b> ;</li>
+        <li>une LED et une résistance de 220 Ω (facultatif).</li>
+      </ul>
+      <p>Sur Chromebook ou tablette, les <b>simulateurs</b> (étape 2) suffisent pour tout le niveau 1.</p></div>
+    </div>
+  </div>
+  <h3>Trois parcours possibles</h3>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Carte et langage</th><th>Logiciel à installer</th><th>Simulateur sans carte</th><th>Étapes à suivre</th></tr></thead>
+    <tbody>
+      <tr><td>Arduino Uno · C/C++</td><td>IDE Arduino 2</td><td>Tinkercad</td><td>1 → 2 → 3 → 4 → 6 → 7 → 8</td></tr>
+      <tr><td>ESP32 · C/C++</td><td>IDE Arduino 2 + paquet ESP32</td><td>Wokwi</td><td>1 → 2 → 3 → 4 → 6 → 7 → 8</td></tr>
+      <tr><td>ESP32 · Python</td><td>Thonny (installe MicroPython sur la carte)</td><td>Wokwi</td><td>1 → 2 → 4 → 5 → 6 → 7 → 8</td></tr>
+    </tbody></table></div>
+  <div class="note py"><span class="label">C/C++ ou Python ?</span><p>L'Arduino Uno se programme uniquement en C/C++. L'ESP32 accepte les deux. Python est plus simple pour débuter : pas de compilation, une commande tapée et la carte réagit aussitôt. C/C++ est plus rapide et dispose de plus de bibliothèques. L'atelier montre toujours les deux.</p></div>
+  <div class="row"><button class="btn copper" data-go="next">Choisir mon parcours</button></div>
+</section>
+
+<!-- ================= 1 PARCOURS ================= -->
+<section class="mod" id="m1" data-title="Choisis ton parcours" hidden>
+  <p class="eyebrow">Étape 1</p>
+  <h2>Choisis ton parcours</h2>
+  <p class="lead">Deux questions, et le site te montre ce qu'il faut installer et les étapes à suivre. Il règle aussi l'affichage du code sur ton langage.</p>
+  <div class="lab">
+    <p class="label">Labo · Mon parcours</p>
+    <div class="choice">
+      <p><b>1. Quelle carte vas-tu utiliser ?</b></p>
+      <div class="tabs" id="ch-board" role="group" aria-label="Carte">
+        <button data-v="uno" aria-pressed="false">Arduino Uno</button>
+        <button data-v="esp" aria-pressed="false">ESP32</button>
+        <button data-v="none" aria-pressed="false">Je n'ai pas encore de carte</button>
+      </div>
+    </div>
+    <div class="choice">
+      <p><b>2. Dans quel langage veux-tu coder ?</b></p>
+      <div class="tabs" id="ch-lang" role="group" aria-label="Langage">
+        <button data-v="cpp" aria-pressed="false">C/C++</button>
+        <button data-v="py" aria-pressed="false">Python</button>
+      </div>
+    </div>
+    <div id="ch-res" aria-live="polite"></div>
+  </div>
+  <div class="note tip"><span class="label">Tu hésites ?</span><p>Pas de carte et pas d'avis : choisis <b>ESP32</b> et <b>Python</b>. C'est le parcours le plus simple, et tu pourras essayer le C/C++ plus tard dans le même simulateur.</p></div>
+</section>
+
+<!-- ================= 2 SIMULATEURS ================= -->
+<section class="mod" id="m2" data-title="Coder sans carte" hidden>
+  <p class="eyebrow">Étape 2</p>
+  <h2>Coder sans carte : les simulateurs</h2>
+  <p class="lead">Un simulateur dessine la carte, les fils et les composants dans ton navigateur. Rien à installer, aucun risque d'abîmer quoi que ce soit : c'est l'endroit idéal pour tester une idée.</p>
+  <div class="panel">
+    <div class="tabs" role="tablist" data-tabs>
+      <button role="tab" aria-selected="true" data-p="sim-tk">Tinkercad (Uno)</button>
+      <button role="tab" aria-selected="false" data-p="sim-wc">Wokwi (ESP32 · C/C++)</button>
+      <button role="tab" aria-selected="false" data-p="sim-wp">Wokwi (ESP32 · Python)</button>
+    </div>
+    <div id="sim-tk" class="prose"><ol class="steps">
+      <li>Va sur <a href="https://www.tinkercad.com" target="_blank" rel="noopener">tinkercad.com</a> et crée un compte gratuit (ou celui de ta classe).</li>
+      <li>Clique sur <b>Créer › Circuit</b>.</li>
+      <li>Dans la liste des composants à droite, fais glisser un <b>Arduino Uno R3</b> sur le plan de travail.</li>
+      <li>Clique sur <b>Code</b>, puis choisis le mode <b>Texte</b> (accepte le message d'avertissement).</li>
+      <li>Colle le programme Blink ci-dessous, puis clique sur <b>Démarrer la simulation</b> : la petite LED « L » de la carte clignote.</li>
+    </ol></div>
+    <div id="sim-wc" class="prose" hidden><ol class="steps">
+      <li>Va sur <a href="https://wokwi.com" target="_blank" rel="noopener">wokwi.com</a> et crée un compte gratuit pour sauvegarder tes projets.</li>
+      <li>Clique sur <b>New Project</b>, choisis <b>ESP32</b>, puis le modèle <b>Arduino</b>.</li>
+      <li>Clique sur le <b>+</b> bleu, ajoute une <b>LED</b> et une <b>résistance</b>, puis relie-les au <b>GPIO 2</b> et à <b>GND</b>.</li>
+      <li>Colle le programme Blink dans <code>sketch.ino</code> en remplaçant <code>13</code> par <code>2</code>.</li>
+      <li>Clique sur le bouton vert <b>▶</b>. Les messages s'affichent sous le schéma.</li>
+    </ol></div>
+    <div id="sim-wp" class="prose" hidden><ol class="steps">
+      <li>Va sur <a href="https://wokwi.com" target="_blank" rel="noopener">wokwi.com</a> et crée un compte gratuit.</li>
+      <li>Clique sur <b>New Project</b>, choisis <b>ESP32</b>, puis le modèle <b>MicroPython</b>.</li>
+      <li>Ajoute une <b>LED</b> et une <b>résistance</b> reliées au <b>GPIO 2</b> et à <b>GND</b>.</li>
+      <li>Colle le programme Blink en Python dans <code>main.py</code>.</li>
+      <li>Clique sur <b>▶</b> : la LED clignote et les <code>print()</code> s'affichent dans la console.</li>
+    </ol></div>
+  </div>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>void setup() {
+  pinMode(13, OUTPUT);         // ESP32 : remplace 13 par 2
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);      // allumer
+  Serial.println("LED allumée");
+  delay(500);
+  digitalWrite(13, LOW);       // éteindre
+  delay(500);
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)          # GPIO 2 en sortie
+
+while True:
+    led.value(1)               # allumer
+    print("LED allumée")
+    time.sleep(0.5)
+    led.value(0)               # éteindre
+    time.sleep(0.5)</pre></figure>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Un simulateur est indulgent : il ne brûle pas une LED sans résistance et ne se trompe jamais de câble. Garde les mêmes bonnes habitudes que sur une vraie carte.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m2"></div>
+</section>
+
+<!-- ================= 3 IDE ARDUINO ================= -->
+<section class="mod" id="m3" data-title="Installer l'IDE Arduino" hidden>
+  <p class="eyebrow">Étape 3 · Parcours C/C++</p>
+  <h2>Installer l'IDE Arduino 2</h2>
+  <p class="lead">L'IDE Arduino est le logiciel où tu écris le programme, le vérifies et l'envoies sur la carte. Le même logiciel sert pour l'Arduino Uno et pour l'ESP32 en C/C++.</p>
+  <div class="note py only-py"><span class="label">Parcours Python</span><p>Tu codes l'ESP32 en Python ? Tu n'as pas besoin de l'IDE Arduino : passe directement à l'étape 4, puis à l'étape 5 (Thonny).</p></div>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">A · Installer le logiciel</p>
+    <ol class="steps">
+      <li>Va sur <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">arduino.cc/en/software</a> et télécharge <b>Arduino IDE 2</b> pour ton système. Le site propose un don : clique sur <b>Just download</b> pour télécharger gratuitement.</li>
+      <li>Lance l'installation et garde les choix proposés. Sous Windows, <b>accepte l'installation des pilotes</b> quand elle est demandée : ce sont eux qui permettent de voir la carte.</li>
+      <li>Ouvre le logiciel. Pour le passer en français : <b>File › Preferences › Language</b>, choisis <b>Français</b>, puis <b>OK</b>.</li>
+    </ol>
+  </div>
+  <div class="panel only-cpp">
+    <p class="label" style="color:var(--copper)">B · Ajouter l'ESP32 (seulement si tu as un ESP32)</p>
+    <ol class="steps">
+      <li>Ouvre <b>Fichier › Préférences</b>.</li>
+      <li>Dans <b>URL de gestionnaire de cartes supplémentaires</b>, colle cette adresse, puis <b>OK</b> :<br><code style="word-break:break-all">https://espressif.github.io/arduino-esp32/package_esp32_index.json</code></li>
+      <li>Ouvre <b>Outils › Carte › Gestionnaire de carte</b> (ou l'icône carte dans la barre de gauche).</li>
+      <li>Cherche <b>esp32</b>, choisis le paquet <b>esp32 par Espressif Systems</b> et clique sur <b>Installer</b>. Le téléchargement est gros : patiente quelques minutes.</li>
+    </ol>
+  </div>
+  <h3>Les boutons à connaître</h3>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Bouton</th><th>Nom</th><th>Ce qu'il fait</th><th>Raccourci</th></tr></thead>
+    <tbody>
+      <tr><td>✓</td><td>Vérifier</td><td>Compile le programme et cherche les erreurs, sans rien envoyer.</td><td><span class="kbd">Ctrl</span> + <span class="kbd">R</span></td></tr>
+      <tr><td>→</td><td>Téléverser</td><td>Compile puis envoie le programme sur la carte.</td><td><span class="kbd">Ctrl</span> + <span class="kbd">U</span></td></tr>
+      <tr><td>🔍</td><td>Moniteur série</td><td>Affiche les messages envoyés par la carte (module 8 de l'atelier).</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Maj</span> + <span class="kbd">M</span></td></tr>
+      <tr><td>▾</td><td>Sélecteur de carte</td><td>Choisit la carte et le port USB.</td><td>—</td></tr>
+    </tbody></table></div>
+  <div class="note tip"><span class="label">Le savais-tu ?</span><p>Sur macOS, remplace <span class="kbd">Ctrl</span> par <span class="kbd">⌘ Cmd</span>. Les noms des menus peuvent varier légèrement d'une version de l'IDE à l'autre.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m3"></div>
+</section>
+
+<!-- ================= 4 BRANCHER ================= -->
+<section class="mod" id="m4" data-title="Brancher sa carte" hidden>
+  <p class="eyebrow">Étape 4</p>
+  <h2>Brancher sa carte</h2>
+  <p class="lead">C'est l'étape où l'on bloque le plus souvent. Dans 9 cas sur 10, le problème vient du câble ou du pilote.</p>
+  <div class="grid2">
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">1 · Le bon câble</p>
+      <p>Certains câbles USB ne font que <b>recharger</b> : la carte s'allume, mais l'ordinateur ne la voit pas. Utilise un câble qui transporte des <b>données</b>, par exemple celui d'un téléphone avec lequel tu transfères des photos.</p>
+    </div>
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">2 · Le pilote</p>
+      <p>Regarde la petite puce près de la prise USB de la carte. Son nom te dit quel pilote installer si la carte n'apparaît pas :</p>
+      <div class="prose"><ul>
+        <li><b>CP2102</b> ou <b>CP210x</b> : <a href="https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers" target="_blank" rel="noopener">pilote Silicon Labs</a></li>
+        <li><b>CH340</b> ou <b>CH341</b> : <a href="https://www.wch-ic.com/downloads/CH341SER_ZIP.html" target="_blank" rel="noopener">pilote WCH</a></li>
+        <li>Arduino Uno d'origine : pilote déjà installé avec l'IDE.</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="panel only-cpp">
+    <p class="label" style="color:var(--copper)">3 · Premier téléversement (IDE Arduino)</p>
+    <ol class="steps">
+      <li>Branche la carte, puis ouvre <b>Outils › Carte</b> et choisis <b>Arduino Uno</b> ou, pour l'ESP32, <b>esp32 › ESP32 Dev Module</b>.</li>
+      <li>Ouvre <b>Outils › Port</b> et choisis le port qui apparaît quand tu branches la carte : <code>COM3</code> sous Windows, <code>/dev/cu.usbserial…</code> sous macOS, <code>/dev/ttyUSB0</code> sous Linux.</li>
+      <li>Ouvre <b>Fichier › Exemples › 01.Basics › Blink</b>. Pour l'ESP32, remplace <code>LED_BUILTIN</code> par <code>2</code>.</li>
+      <li>Clique sur <b>→ Téléverser</b>. Après « Téléversement terminé », la LED clignote.</li>
+      <li><b>ESP32 seulement :</b> si le message <code>Connecting....</code> se répète puis échoue, maintiens le bouton <b>BOOT</b> de la carte appuyé jusqu'à ce que le pourcentage d'écriture s'affiche.</li>
+    </ol>
+  </div>
+  <div class="panel only-py">
+    <p class="label" style="color:var(--copper)">3 · Parcours Python</p>
+    <p>La carte se branche de la même façon. Le choix du port se fait dans Thonny, à l'étape 5.</p>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Sous Linux, si le port existe mais que l'envoi est refusé (« Permission denied »), ajoute ton compte au groupe <code>dialout</code> avec <code>sudo usermod -a -G dialout $USER</code>, puis ferme ta session et rouvre-la.</p></div>
+  <div class="lab">
+    <p class="label">Labo · Uno, ESP32 ou les deux ?</p>
+    <p>Pour chaque phrase, indique quelle carte elle concerne.</p>
+    <div class="sort" id="sort4"></div>
+    <p id="sort4-res" class="score" aria-live="polite"></p>
+  </div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m4"></div>
+</section>
+
+<!-- ================= 5 THONNY ================= -->
+<section class="mod" id="m5" data-title="L'ESP32 en Python" hidden>
+  <p class="eyebrow">Étape 5 · Parcours Python</p>
+  <h2>L'ESP32 en Python avec Thonny</h2>
+  <p class="lead">Thonny est un éditeur Python très simple. Il sait installer MicroPython sur l'ESP32, puis te laisse parler à la carte ligne par ligne.</p>
+  <div class="note tip only-cpp"><span class="label">Parcours C/C++</span><p>Tu restes en C/C++ ? Cette étape est facultative. Tu peux la lire pour découvrir Python, puis passer à l'étape 6.</p></div>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">A · Installer Thonny et MicroPython</p>
+    <ol class="steps">
+      <li>Télécharge <b>Thonny</b> sur <a href="https://thonny.org" target="_blank" rel="noopener">thonny.org</a> et installe-le avec les choix proposés.</li>
+      <li>Branche l'ESP32 (câble de données, pilote de l'étape 4 si besoin).</li>
+      <li>Dans Thonny, ouvre <b>Exécuter › Configurer l'interpréteur</b>. Choisis <b>MicroPython (ESP32)</b> et le port de ta carte.</li>
+      <li>Clique sur <b>Installer ou mettre à jour MicroPython</b>. Choisis la famille <b>ESP32</b> et la variante <b>Espressif · ESP32 / WROOM</b>, puis <b>Installer</b>. Cette opération se fait <b>une seule fois</b> par carte.</li>
+      <li>Ferme la fenêtre avec <b>OK</b>. Dans la <b>Console</b> en bas apparaît <code>&gt;&gt;&gt;</code> : la carte t'écoute.</li>
+    </ol>
+  </div>
+  <div class="lab">
+    <p class="label">Labo · Parle à la carte comme dans Thonny</p>
+    <p>Tape les commandes une par une, dans l'ordre des boutons, et observe la LED. Essaie aussi de te tromper : les messages d'erreur sont là pour t'aider.</p>
+    <div class="row"><div class="led" id="r-led" aria-label="LED du GPIO 2"></div><span class="mono" style="color:var(--muted)">LED sur le GPIO 2</span></div>
+    <div class="chips" id="r-chips">
+      <button>from machine import Pin</button><button>led = Pin(2, Pin.OUT)</button><button>led.value(1)</button><button>led.value(0)</button><button>print("Bonjour")</button><button>2 + 3 * 4</button>
+    </div>
+    <div class="monitor" id="r-out" aria-live="polite"></div>
+    <form class="repl-in" id="r-form"><input type="text" id="r-in" aria-label="Commande Python" placeholder="Tape une commande puis Entrée" autocomplete="off" spellcheck="false"><button class="btn" type="submit">Entrée</button><button class="btn ghost" type="button" id="r-reset">Redémarrer la carte</button></form>
+  </div>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">B · Faire démarrer ton programme tout seul</p>
+    <ol class="steps">
+      <li>Écris ton programme dans la zone d'édition en haut de Thonny (par exemple le Blink de l'étape 2).</li>
+      <li>Clique sur <b>▶ Exécuter</b> pour l'essayer. Le bouton rouge <b>Stop</b> l'arrête et rend la main.</li>
+      <li>Quand il marche : <b>Fichier › Enregistrer sous… › Appareil MicroPython</b>, sous le nom <code>main.py</code>.</li>
+      <li>Débranche puis rebranche la carte : le programme démarre seul, même sans ordinateur.</li>
+    </ol>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Thonny et le moniteur série de l'IDE Arduino ne peuvent pas utiliser le même port en même temps. Si Thonny affiche « port occupé », ferme l'autre logiciel. Et pour revenir au C/C++ sur la même carte, il suffit de téléverser depuis l'IDE Arduino : MicroPython est remplacé.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m5"></div>
+</section>
+
+<!-- ================= 6 ORGANISER ================= -->
+<section class="mod" id="m6" data-title="Organiser son espace" hidden>
+  <p class="eyebrow">Étape 6</p>
+  <h2>Organiser son espace de travail</h2>
+  <p class="lead">Un espace efficace, c'est aussi retrouver son programme de la semaine dernière en 10 secondes. Quatre habitudes suffisent.</p>
+  <h3>1 · Une routine en quatre temps</h3>
+  <div class="ets e4" aria-label="Écrire, vérifier, téléverser, observer">
+    <div style="background:#2B8FC4">ÉCRIRE<small>quelques lignes à la fois</small></div><span class="arrow">→</span>
+    <div style="background:#1F3A93">VÉRIFIER<small><span class="only-cpp">bouton ✓</span><span class="only-py">bouton ▶</span></small></div><span class="arrow">→</span>
+    <div style="background:#C46A22">TÉLÉVERSER<small><span class="only-cpp">bouton →</span><span class="only-py">enregistrer main.py</span></small></div><span class="arrow">→</span>
+    <div style="background:#1E7F46">OBSERVER<small>LED, moniteur ou console</small></div>
+  </div>
+  <p class="prose">Ajoute peu de code entre deux vérifications : si une erreur apparaît, tu sais qu'elle vient des dernières lignes.</p>
+  <h3>2 · Un dossier par niveau, un dossier par programme</h3>
+  <div class="grid2">
+<pre class="tree"><b>Atelier-Arduino/</b>
+├── niveau-1/
+│   ├── 01_blink/
+│   │   └── 01_blink.ino
+│   ├── 02_blink_rapide/
+│   │   └── 02_blink_rapide.ino
+│   └── 09_lampe_eco/
+│       └── 09_lampe_eco.ino
+└── niveau-2/</pre>
+<pre class="tree"><b>Atelier-Python/</b>
+├── niveau-1/
+│   ├── 01_blink.py
+│   ├── 02_blink_rapide.py
+│   └── 09_lampe_eco.py
+└── niveau-2/
+
+<b>Sur la carte (Appareil MicroPython)</b>
+└── main.py   ← démarre tout seul</pre>
+  </div>
+  <div class="note tip"><span class="label">Le savais-tu ?</span><p>L'IDE Arduino exige qu'un programme <code>lampe.ino</code> soit rangé dans un dossier qui porte <b>exactement le même nom</b> : <code>lampe/</code>. Il le crée pour toi quand tu enregistres un nouveau croquis.</p></div>
+  <div class="lab">
+    <p class="label">Labo · Bon nom ou nom à éviter ?</p>
+    <p>Un bon nom est court, sans espaces ni accents, et dit ce que fait le programme.</p>
+    <div class="sort" id="sort6"></div>
+    <p id="sort6-res" class="score" aria-live="polite"></p>
+  </div>
+  <h3>3 · Un en-tête en haut de chaque programme</h3>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>// Projet : Blink rapide
+// Auteur : ton prénom
+// Date   : 17/10/2026
+// Carte  : Arduino Uno, LED sur la broche 13
+// But    : faire clignoter la LED à 2 Hz
+
+void setup() {
+  pinMode(13, OUTPUT);
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre># Projet : Blink rapide
+# Auteur : ton prénom
+# Date   : 17/10/2026
+# Carte  : ESP32 DevKit, LED sur le GPIO 2
+# But    : faire clignoter la LED à 2 Hz
+
+from machine import Pin</pre></figure>
+  </div>
+  <h3>4 · Les bibliothèques et les sauvegardes</h3>
+  <div class="grid2">
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">Ajouter une bibliothèque</p>
+      <p class="only-cpp"><b>IDE Arduino :</b> <b>Outils › Gérer les bibliothèques</b> (<span class="kbd">Ctrl</span> + <span class="kbd">Maj</span> + <span class="kbd">I</span>), cherche le nom, puis <b>Installer</b>.</p>
+      <p class="only-py"><b>MicroPython :</b> l'essentiel (<code>machine</code>, <code>time</code>, <code>network</code>) est déjà dans la carte. Rien à installer au niveau 1.</p>
+    </div>
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">Ne jamais perdre son travail</p>
+      <p>Avant de modifier un programme qui marche, fais-en une copie : <code>lampe_eco_v2</code>. Copie ton dossier Atelier sur une clé USB ou dans le cloud de l'école à la fin de chaque séance.</p>
+    </div>
+  </div>
+  <div class="note tip"><span class="label">Pour aller plus loin · niveau 3</span><p>Quand tes projets auront plusieurs fichiers, tu pourras passer à <b>VS Code + PlatformIO</b> : autocomplétion, bibliothèques par projet et simulation Wokwi intégrée. Inutile pour le niveau 1, l'IDE Arduino et Thonny suffisent largement.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m6"></div>
+</section>
+
+<!-- ================= 7 DÉPANNAGE ================= -->
+<section class="mod" id="m7" data-title="Dépannage" hidden>
+  <p class="eyebrow">Étape 7</p>
+  <h2>Ça ne marche pas ? Dépanne-toi seul</h2>
+  <p class="lead">Lis d'abord le message d'erreur : il dit presque toujours où chercher. Clique sur le symptôme qui ressemble au tien.</p>
+  <div class="tabs" id="tr-filter" role="group" aria-label="Filtrer par outil">
+    <button data-f="all" aria-pressed="true">Tous</button>
+    <button data-f="ide" aria-pressed="false">IDE Arduino</button>
+    <button data-f="thonny" aria-pressed="false">Thonny</button>
+    <button data-f="usb" aria-pressed="false">Câble et port</button>
+  </div>
+  <div class="trouble" id="trouble">
+    <details class="panel" data-t="usb"><summary><b>Aucun port n'apparaît</b> quand je branche la carte</summary><div class="prose" style="margin-top:10px"><ol class="steps"><li>Essaie un autre câble : beaucoup ne font que recharger.</li><li>Essaie une autre prise USB de l'ordinateur, sans hub.</li><li>Installe le pilote CP210x ou CH340 (étape 4), puis redémarre l'ordinateur.</li></ol></div></details>
+    <details class="panel" data-t="ide"><summary><span class="sym">Failed to connect to ESP32: Timed out waiting for packet header</span></summary><div class="prose" style="margin-top:10px"><p>L'ESP32 n'est pas entré en mode programmation. Relance le téléversement et <b>maintiens le bouton BOOT</b> pendant que <code>Connecting....</code> s'affiche. Vérifie aussi que la carte choisie est <b>ESP32 Dev Module</b>.</p></div></details>
+    <details class="panel" data-t="ide"><summary><span class="sym">avrdude: stk500_getsync(): not in sync</span> (Uno)</summary><div class="prose" style="margin-top:10px"><p>L'IDE ne parle pas à la bonne carte. Vérifie <b>Outils › Carte</b> (Arduino Uno) et <b>Outils › Port</b>. Débranche aussi les fils des broches <b>0 et 1</b> : elles servent à l'USB pendant le téléversement.</p></div></details>
+    <details class="panel" data-t="ide"><summary><span class="sym">'digitalwrite' was not declared in this scope</span></summary><div class="prose" style="margin-top:10px"><p>Une faute de frappe, souvent une majuscule : le C/C++ distingue <code>digitalWrite</code> et <code>digitalwrite</code>. Compare lettre par lettre avec l'exemple.</p></div></details>
+    <details class="panel" data-t="ide"><summary><span class="sym">expected ';' before …</span></summary><div class="prose" style="margin-top:10px"><p>Il manque un point-virgule à la fin de la <b>ligne précédente</b> celle indiquée. Chaque instruction C/C++ finit par <code>;</code>.</p></div></details>
+    <details class="panel" data-t="ide"><summary>Je ne trouve pas <b>ESP32 Dev Module</b> dans la liste des cartes</summary><div class="prose" style="margin-top:10px"><p>Le paquet ESP32 n'est pas installé. Refais l'étape 3 B : l'adresse dans les Préférences, puis le paquet <b>esp32 par Espressif Systems</b>.</p></div></details>
+    <details class="panel" data-t="ide thonny"><summary>Le moniteur ou la console affiche des <b>caractères bizarres</b></summary><div class="prose" style="margin-top:10px"><p>Dans l'IDE Arduino, la vitesse en bas du moniteur doit être la même que dans <code>Serial.begin()</code>. Dans Thonny, appuie sur <b>Stop</b> pour redémarrer la connexion. Voir le module 8 de l'atelier.</p></div></details>
+    <details class="panel" data-t="thonny"><summary><span class="sym">Could not enter REPL</span> ou « port occupé » dans Thonny</summary><div class="prose" style="margin-top:10px"><p>Un programme tourne en boucle sur la carte, ou un autre logiciel utilise le port. Clique sur <b>Stop</b> (ou <span class="kbd">Ctrl</span> + <span class="kbd">C</span> dans la console) et ferme le moniteur série de l'IDE Arduino.</p></div></details>
+    <details class="panel" data-t="thonny"><summary><span class="sym">IndentationError: unexpected indent</span></summary><div class="prose" style="margin-top:10px"><p>En Python, les espaces au début des lignes comptent. Les lignes d'un même bloc doivent avoir <b>exactement le même décalage</b> : 4 espaces sous <code>while True:</code>.</p></div></details>
+    <details class="panel" data-t="thonny"><summary><span class="sym">NameError: name 'Pin' isn't defined</span></summary><div class="prose" style="margin-top:10px"><p>Il manque la ligne <code>from machine import Pin</code> en haut du programme. Même chose pour <code>time</code> : <code>import time</code>.</p></div></details>
+    <details class="panel" data-t="thonny"><summary>Mon programme Python <b>ne démarre pas seul</b> quand je rebranche la carte</summary><div class="prose" style="margin-top:10px"><p>Il est enregistré sur l'ordinateur, pas sur la carte. Fais <b>Fichier › Enregistrer sous… › Appareil MicroPython</b>, avec le nom exact <code>main.py</code>.</p></div></details>
+    <details class="panel" data-t="usb"><summary>La carte <b>redémarre sans arrêt</b> ou chauffe</summary><div class="prose" style="margin-top:10px"><p>Débranche-la tout de suite. Vérifie qu'aucun fil ne relie directement 5 V (ou 3,3 V) à GND, et qu'aucun composant 5 V n'est branché sur une broche de l'ESP32.</p></div></details>
+  </div>
+  <div class="note tip"><span class="label">La méthode du détective</span><p>Change <b>une seule chose</b> à la fois, puis réessaie. Si rien ne marche, reviens au programme Blink : s'il fonctionne, le problème est dans ton code ; sinon, il est dans le câble, le pilote ou les réglages.</p></div>
+  <div class="row"><button class="btn copper" id="m7-done">J'ai repéré les erreurs à surveiller</button></div>
+</section>
+
+<!-- ================= 8 BILAN ================= -->
+<section class="mod" id="m8" data-title="Mon atelier est prêt" hidden>
+  <p class="eyebrow">Étape 8 · Bilan</p>
+  <h2>Mon atelier est prêt</h2>
+  <p class="lead">Coche ce qui fonctionne chez toi. Les lignes affichées suivent le langage choisi en haut de la page.</p>
+  <div class="panel" id="ready"></div>
+  <p id="ready-res" class="score" aria-live="polite"></p>
+  <h3>Quiz final</h3>
+  <div class="quiz" data-quiz="m8"></div>
+  <div class="panel" style="background:var(--copper-soft);border-color:var(--copper)">
+    <p class="label" style="color:var(--copper-ink)">Prochaine étape · Module 1</p>
+    <p>Ton espace est prêt. Direction l'atelier : comprendre ce qu'est une carte programmable, puis faire clignoter ta LED au rythme que tu choisis.</p>
+    <div class="row"><a class="btn copper" href="Atelier-Arduino-ESP32.html" style="text-decoration:none">Ouvrir l'atelier Arduino &amp; ESP32</a></div>
+  </div>
+</section>
+
+    <div class="foot-nav" id="foot">
+      <button class="btn ghost" id="prev">← Précédent</button>
+      <button class="btn" id="next">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+const LS = {get(k,d){try{const v=localStorage.getItem("aae0:"+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+            set(k,v){try{localStorage.setItem("aae0:"+k,JSON.stringify(v))}catch(e){}}};
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ---------- langage (même réglage que l'atelier) ---------- */
+function setLang(l){document.documentElement.dataset.lang=l;$$(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===l));
+  try{localStorage.setItem("aae1:lang",JSON.stringify(l))}catch(e){}; if(window.readyRender)readyRender()}
+$$(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+let startLang="both";try{const v=localStorage.getItem("aae1:lang");if(v)startLang=JSON.parse(v)}catch(e){}
+
+/* ---------- coloration du code ---------- */
+function hl(code,lang){
+  const re = lang==="py"
+    ? /(#.*$)|("(?:[^"\\]|\\.)*")|\b(\d+(?:\.\d+)?)\b|\b(from|import|while|True|False|if|else|elif|for|in|range|def|return|not|and|or|print)\b/gm
+    : /(\/\/.*$)|("(?:[^"\\]|\\.)*")|\b(\d+(?:\.\d+)?)\b|\b(void|int|float|char|const|if|else|for|while|return|HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP|true|false)\b/gm;
+  let out="",last=0;
+  for(const m of code.matchAll(re)){out+=esc(code.slice(last,m.index));const c=m[1]?"c":m[2]?"s":m[3]?"n":"k";out+=`<span class="t-${c}">${esc(m[0])}</span>`;last=m.index+m[0].length}
+  return out+esc(code.slice(last));
+}
+$$("figure.code pre").forEach(pre=>{const code=pre.textContent,lang=pre.closest(".code").dataset.l;pre.dataset.raw=code;
+  pre.innerHTML=code.split("\n").map((l,i)=>`<span class="ln" data-i="${i}">${hl(l,lang)||" "}</span>`).join("")});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("figure.code figcaption button"); if(!b)return;
+  const raw=b.closest("figure").querySelector("pre").dataset.raw;
+  const done=()=>{b.textContent="Copié";setTimeout(()=>b.textContent="Copier",1400)};
+  try{navigator.clipboard.writeText(raw).then(done,()=>selectPre(b))}catch(err){selectPre(b)}
+});
+function selectPre(b){const r=document.createRange();r.selectNodeContents(b.closest("figure").querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Ctrl+C"}
+
+/* ---------- navigation ---------- */
+const mods=$$("section.mod"), rail=$("#rail"), TOTAL=mods.length-1;
+let done=LS.get("done",{});
+mods.forEach((m,i)=>{
+  const b=document.createElement("button");b.dataset.id=m.id;
+  b.innerHTML=`<span class="n">${i===0?"··":String(i).padStart(2,"0")}</span><span class="t">${m.dataset.title}</span><span class="ck" aria-hidden="true"></span>`;
+  b.setAttribute("aria-label",m.dataset.title);b.onclick=()=>show(m.id);rail.appendChild(b);
+});
+let cur=0;
+function show(id,scroll=true){
+  const i=Math.max(0,mods.findIndex(m=>m.id===id));cur=i;
+  mods.forEach((m,j)=>m.hidden=j!==i);
+  $$("#rail button").forEach((b,j)=>b.setAttribute("aria-current",j===i));
+  $("#prev").disabled=i===0;$("#next").disabled=i===mods.length-1;
+  $("#next").textContent=i===mods.length-1?"Fin du module 0":"Suivant →";
+  try{history.replaceState(null,"","#"+mods[i].id)}catch(e){}
+  LS.set("cur",mods[i].id);
+  if(scroll) window.scrollTo({top:0,behavior:"smooth"});
+}
+$("#prev").onclick=()=>show(mods[cur-1].id);
+$("#next").onclick=()=>show(mods[cur+1].id);
+$$("[data-go=next]").forEach(b=>b.onclick=()=>show(mods[cur+1].id));
+function markDone(id){done[id]=true;LS.set("done",done);refreshDone()}
+function refreshDone(){
+  $$("#rail button").forEach(b=>b.classList.toggle("done",!!done[b.dataset.id]));
+  const n=mods.slice(1).filter(m=>done[m.id]).length;
+  $("#meter-bar").style.width=(n/TOTAL*100)+"%";$("#meter-txt").textContent=`${n} / ${TOTAL} étapes terminées`;
+}
+
+/* ---------- onglets ---------- */
+$$("[data-tabs]").forEach(tl=>{const bs=[...tl.querySelectorAll("button")];
+  bs.forEach(b=>b.onclick=()=>bs.forEach(x=>{x.setAttribute("aria-selected",x===b);$("#"+x.dataset.p).hidden=x!==b}))});
+
+/* ---------- étape 1 : parcours ---------- */
+let path=LS.get("path",{});
+const NAMES={m2:"Coder sans carte (simulateur)",m3:"Installer l'IDE Arduino 2",m4:"Brancher sa carte",m5:"L'ESP32 en Python avec Thonny",m6:"Organiser son espace",m7:"Dépannage",m8:"Mon atelier est prêt"};
+function pathRender(){
+  ["board","lang"].forEach(k=>$$(`#ch-${k} button`).forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===path[k])));
+  const r=$("#ch-res");
+  if(!path.board||!path.lang){r.innerHTML="";return}
+  if(path.board==="uno"&&path.lang==="py"){
+    r.innerHTML=`<div class="result bad"><p><b>L'Arduino Uno ne se programme pas en Python.</b> Sa mémoire (2 Ko) est trop petite pour MicroPython.</p><p>Deux solutions : garde ton Uno et choisis <b>C/C++</b>, ou utilise un <b>ESP32</b> pour coder en Python.</p></div>`;return}
+  const py=path.lang==="py", sim=path.board==="uno"?"Tinkercad":"Wokwi";
+  const soft=py?"Thonny":(path.board==="uno"?"IDE Arduino 2":"IDE Arduino 2 + paquet ESP32");
+  let steps=py?["m2","m4","m5","m6","m7","m8"]:["m2","m3","m4","m6","m7","m8"];
+  if(path.board==="none") steps=["m2","m6","m7","m8"];
+  const install=path.board==="none"?`Rien pour l'instant : le simulateur <b>${sim}</b> suffit. Le jour où tu auras ta carte, reviens aux étapes ${py?"4 et 5":"3 et 4"}.`:`<b>${soft}</b>`;
+  r.innerHTML=`<div class="result"><p class="label" style="color:var(--ok)">Ton parcours</p>
+    <p><b>Carte :</b> ${path.board==="uno"?"Arduino Uno":path.board==="esp"?"ESP32":"pas encore (on simule une ESP32)"} · <b>Langage :</b> ${py?"Python (MicroPython)":"C/C++"}</p>
+    <p><b>À installer :</b> ${install}</p>
+    <p><b>Simulateur :</b> ${sim}</p>
+    <p><b>Étapes à suivre :</b></p>
+    <ol>${steps.map(s=>`<li><button data-to="${s}">${NAMES[s]}</button></li>`).join("")}</ol>
+    <p style="font-size:.9rem;color:var(--muted)">L'affichage du code est réglé sur ${py?"Python":"C/C++"}. Tu peux le changer à tout moment en haut de la page.</p></div>`;
+  r.querySelectorAll("[data-to]").forEach(b=>b.onclick=()=>show(b.dataset.to));
+}
+["board","lang"].forEach(k=>$$(`#ch-${k} button`).forEach(b=>b.onclick=()=>{path[k]=b.dataset.v;
+  if(path.board==="none"&&!path.lang){} LS.set("path",path);
+  if(path.board&&path.lang&&!(path.board==="uno"&&path.lang==="py")){setLang(path.lang);markDone("m1")}
+  pathRender()}));
+
+/* ---------- quiz ---------- */
+const QUIZ={
+ m2:[{q:"Quel simulateur choisir pour un Arduino Uno ?",o:["Tinkercad","Thonny","Le moniteur série"],a:0,w:"Tinkercad simule l'Arduino Uno. Wokwi est le choix pour l'ESP32."},
+     {q:"Dans Wokwi, l'ESP32 se programme…",o:["seulement en Python","en C/C++ ou en MicroPython","seulement en blocs"],a:1,w:"On choisit le modèle Arduino (C/C++) ou MicroPython en créant le projet."},
+     {q:"Le grand avantage d'un simulateur ?",o:["Il rend la carte plus rapide","On teste sans matériel et sans rien risquer","Il remplace la résistance"],a:1,w:"Pas de carte à acheter, rien à griller : idéal pour essayer."}],
+ m3:[{q:"Pour programmer un ESP32 dans l'IDE Arduino, il faut d'abord…",o:["installer le paquet esp32 d'Espressif","acheter une licence","installer Thonny"],a:0,w:"On ajoute l'adresse dans les Préférences, puis le paquet dans le gestionnaire de carte."},
+     {q:"Le bouton ✓ sert à…",o:["envoyer le programme sur la carte","vérifier le programme sans l'envoyer","ouvrir le moniteur série"],a:1,w:"Il compile et signale les erreurs. La flèche → téléverse."},
+     {q:"Quel raccourci téléverse le programme ?",o:["Ctrl + U","Ctrl + S","Ctrl + Maj + M"],a:0,w:"U comme upload, téléverser en anglais."}],
+ m4:[{q:"La carte s'allume mais aucun port n'apparaît. Première chose à essayer ?",o:["Réinstaller l'ordinateur","Changer de câble USB","Ajouter une LED"],a:1,w:"Beaucoup de câbles ne transportent que le courant, pas les données."},
+     {q:"Quelle carte choisir dans l'IDE pour une ESP32 DevKit ?",o:["Arduino Uno","ESP32 Dev Module","Arduino Due"],a:1,w:"C'est le réglage le plus courant pour les cartes ESP32 de l'atelier."},
+     {q:"Le téléversement vers l'ESP32 reste bloqué sur « Connecting.... ». Que faire ?",o:["Maintenir le bouton BOOT","Débrancher la LED","Changer la vitesse du moniteur"],a:0,w:"BOOT force l'ESP32 à accepter un nouveau programme."}],
+ m5:[{q:"Que fait « Installer ou mettre à jour MicroPython » ?",o:["Il installe Python sur l'ordinateur","Il copie l'interpréteur MicroPython dans la carte","Il crée un compte Wokwi"],a:1,w:"Une fois MicroPython dans sa flash, l'ESP32 comprend le Python."},
+     {q:"Tu tapes led.value(1) dans la console de Thonny. Que se passe-t-il ?",o:["Rien avant d'avoir compilé","La LED s'allume tout de suite","Thonny redémarre"],a:1,w:"C'est l'avantage du Python : pas de compilation, la carte exécute la ligne aussitôt."},
+     {q:"Pour que ton programme démarre seul à la mise sous tension, tu l'enregistres…",o:["sur l'ordinateur sous blink.txt","sur la carte sous main.py","dans Wokwi"],a:1,w:"Au démarrage, MicroPython lance automatiquement main.py."}],
+ m6:[{q:"Le programme lampe.ino doit être rangé dans…",o:["un dossier nommé lampe","n'importe quel dossier","le dossier Téléchargements"],a:0,w:"L'IDE Arduino veut un dossier du même nom que le croquis."},
+     {q:"L'ordre de la routine de travail ?",o:["Téléverser, écrire, observer, vérifier","Écrire, vérifier, téléverser, observer","Observer, écrire, téléverser"],a:1,w:"On vérifie avant d'envoyer, puis on observe le résultat."},
+     {q:"Pourquoi éviter les espaces et les accents dans les noms de fichiers ?",o:["Ils rendent le code plus lent","Certains outils les gèrent mal","Ils effacent la carte"],a:1,w:"Un nom comme 02_blink_rapide fonctionne partout."}],
+ m8:[{q:"Tu as un Arduino Uno. Quel langage utilises-tu ?",o:["Python","C/C++","Les deux"],a:1,w:"L'Uno n'a pas assez de mémoire pour MicroPython."},
+     {q:"Quel logiciel sert à coder l'ESP32 en Python ?",o:["Thonny","Tinkercad","L'IDE Arduino"],a:0,w:"Thonny installe MicroPython et donne une console pour parler à la carte."},
+     {q:"Quel simulateur permet de tester l'ESP32 sans carte ?",o:["Wokwi","Thonny","Le moniteur série"],a:0,w:"Wokwi simule l'ESP32 en C/C++ et en MicroPython."},
+     {q:"Le message « Failed to connect to ESP32 » apparaît. Que fais-tu ?",o:["Je maintiens BOOT pendant le téléversement","Je change de langage","J'ajoute une résistance"],a:0,w:"L'ESP32 doit entrer en mode programmation."},
+     {q:"NameError: name 'Pin' isn't defined. Il manque…",o:["un point-virgule","from machine import Pin","un câble"],a:1,w:"En Python, on importe les outils avant de les utiliser."},
+     {q:"La meilleure méthode quand rien ne marche ?",o:["Tout changer d'un coup","Changer une seule chose à la fois et revenir à Blink","Recommencer l'installation"],a:1,w:"Blink sert de test : s'il marche, le problème est dans ton code."}]
+};
+let qans=LS.get("quiz",{});
+$$(".quiz").forEach(box=>{
+  const id=box.dataset.quiz, qs=QUIZ[id]; qans[id]=qans[id]||{};
+  qs.forEach((q,i)=>{
+    const d=document.createElement("div");d.className="q";
+    d.innerHTML=`<p class="qt">${i+1}. ${q.q}</p><div class="opts">${q.o.map((o,j)=>`<button data-j="${j}">${o}</button>`).join("")}</div><p class="why" hidden></p>`;
+    const btns=[...d.querySelectorAll(".opts button")];
+    const apply=j=>{btns.forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add("good");else if(k===j)b.classList.add("wrong")});
+      const w=d.querySelector(".why");w.hidden=false;w.innerHTML=(j===q.a?"<b style='color:var(--ok)'>Bravo.</b> ":"<b style='color:var(--bad)'>Pas tout à fait.</b> ")+q.w};
+    btns.forEach(b=>b.onclick=()=>{const j=+b.dataset.j;qans[id][i]=j;LS.set("quiz",qans);apply(j);score()});
+    if(qans[id][i]!==undefined) apply(qans[id][i]);
+    box.appendChild(d);
+  });
+  const s=document.createElement("div");s.className="row";
+  s.innerHTML=`<p class="score" aria-live="polite"></p><button class="btn ghost" hidden>Recommencer le quiz</button>`;box.appendChild(s);
+  s.querySelector("button").onclick=()=>{qans[id]={};LS.set("quiz",qans);
+    box.querySelectorAll(".q").forEach(q=>{q.querySelectorAll(".opts button").forEach(b=>{b.disabled=false;b.classList.remove("good","wrong")});q.querySelector(".why").hidden=true});
+    s.querySelector("p").textContent="";s.querySelector("button").hidden=true;s.classList.remove("win")};
+  function score(){
+    const n=Object.keys(qans[id]).length, ok=qs.filter((q,i)=>qans[id][i]===q.a).length;
+    if(n===qs.length){s.querySelector("p").textContent=`Score : ${ok} / ${qs.length}`+(ok===qs.length?" · parfait !":ok>=qs.length/2?" · bien joué":" · relis l'étape et réessaie");
+      s.querySelector("button").hidden=false;s.classList.add("win");markDone(box.closest("section").id)}
+  }
+  score();
+});
+
+/* ---------- jeux de tri ---------- */
+function sortGame(el,res,items,cats){
+  let st={};
+  items.forEach((it,i)=>{
+    const d=document.createElement("div");d.className="it";
+    d.innerHTML=`<span>${it[0]}</span><span class="row">${cats.map(c=>`<button>${c}</button>`).join("")}</span>`;
+    d.querySelectorAll("button").forEach(b=>b.onclick=()=>{st[i]=b.textContent===it[1];d.className="it "+(st[i]?"ok":"ko");
+      d.querySelector("span").innerHTML=it[0]+(st[i]?"":` <small style="color:var(--bad)">→ réponse : ${it[1]}</small>`);
+      const n=Object.keys(st).length;if(n===items.length){const k=Object.values(st).filter(Boolean).length;$(res).textContent=`${k} / ${items.length} bonnes réponses`}});
+    $(el).appendChild(d);
+  });
+}
+sortGame("#sort4","#sort4-res",[["Il faut un câble USB qui transporte des données","Les deux"],["On choisit « ESP32 Dev Module » dans Outils › Carte","ESP32"],["Le bouton BOOT aide quand la connexion échoue","ESP32"],["Le pilote CH340 peut être nécessaire","Les deux"],["Se programme seulement en C/C++","Uno"],["Ses broches supportent 3,3 V au maximum","ESP32"]],["Uno","ESP32","Les deux"]);
+sortGame("#sort6","#sort6-res",[["02_blink_rapide","Bon nom"],["Mon programme final (2)","À éviter"],["lampe_eco_v2","Bon nom"],["capteur température","À éviter"],["test","À éviter"],["09_lampe_eco","Bon nom"]],["Bon nom","À éviter"]);
+
+/* ---------- étape 5 : console MicroPython simulée ---------- */
+let env={};
+const out=$("#r-out"), led=$("#r-led");
+function line(t,c){const s=document.createElement("div");if(c)s.className=c;s.textContent=t;out.appendChild(s);out.scrollTop=out.scrollHeight}
+function boot(){env={};led.classList.remove("on");out.textContent="";line("MicroPython v1.2x on ESP32","sys");line('Type "help()" for more information.',"sys")}
+function err(name,msg){line("Traceback (most recent call last):","err");line('  File "<stdin>", line 1, in <module>',"err");line(`${name}: ${msg}`,"err")}
+function run(cmd){
+  cmd=cmd.trim();if(!cmd)return;line(">>> "+cmd,"in");let m;
+  if(/^from machine import (Pin|\*)$/.test(cmd)){env.Pin=true;return}
+  if(cmd==="import machine"){env.machine=true;return}
+  if(cmd==="import time"){env.time=true;return}
+  if(cmd==="help()"){line("Essaie : from machine import Pin, puis led = Pin(2, Pin.OUT), puis led.value(1)");return}
+  if(m=cmd.match(/^(\w+)\s*=\s*(machine\.)?Pin\(\s*2\s*,\s*(machine\.)?Pin\.OUT\s*\)$/)){
+    if(m[2]?!env.machine:!env.Pin){err("NameError",`name '${m[2]?"machine":"Pin"}' isn't defined`);line("→ Indice : commence par from machine import Pin","sys");return}
+    env.leds=env.leds||{};env.leds[m[1]]=true;return}
+  if(m=cmd.match(/^(\w+)\.(value\(\s*([01])\s*\)|on\(\)|off\(\)|value\(\))$/)){
+    if(!(env.leds||{})[m[1]]){err("NameError",`name '${m[1]}' isn't defined`);line("→ Indice : crée d'abord la LED avec led = Pin(2, Pin.OUT)","sys");return}
+    if(m[2]==="value()"){line(led.classList.contains("on")?"1":"0");return}
+    const on=m[2]==="on()"||m[3]==="1";led.classList.toggle("on",on);return}
+  if(m=cmd.match(/^time\.sleep(_ms)?\(\s*[\d.]+\s*\)$/)){if(!env.time){err("NameError","name 'time' isn't defined");line("→ Indice : tape import time","sys")}return}
+  if(m=cmd.match(/^print\((.*)\)$/)){const a=m[1].trim();
+    if(/^"[^"]*"$|^'[^']*'$/.test(a)){line(a.slice(1,-1));return}
+    if(/^[\d\s+\-*/().]+$/.test(a)){try{line(String(Function("return ("+a+")")()))}catch(e){err("SyntaxError","invalid syntax")}return}
+    if(/^[A-Za-zÀ-ÿ ]+$/.test(a)){err("NameError",`name '${a.split(" ")[0]}' isn't defined`);line('→ Indice : un texte se met entre guillemets : print("Bonjour")',"sys");return}
+    err("SyntaxError","invalid syntax");return}
+  if(/^[\d\s+\-*/().]+$/.test(cmd)){try{line(String(Function("return ("+cmd+")")()))}catch(e){err("SyntaxError","invalid syntax")}return}
+  if(/;\s*$/.test(cmd)){err("SyntaxError","invalid syntax");line("→ Indice : pas de point-virgule en Python","sys");return}
+  if(/^(digitalWrite|pinMode|delay|Serial)/.test(cmd)){err("NameError",`name '${cmd.match(/^\w+/)[0]}' isn't defined`);line("→ Indice : c'est du C/C++. En Python : led.value(1)","sys");return}
+  err("SyntaxError","invalid syntax");line("→ Indice : utilise les boutons au-dessus pour voir des exemples","sys");
+}
+$("#r-form").onsubmit=e=>{e.preventDefault();run($("#r-in").value);$("#r-in").value=""};
+$$("#r-chips button").forEach(b=>b.onclick=()=>run(b.textContent));
+$("#r-reset").onclick=boot;boot();
+
+/* ---------- étape 7 : dépannage ---------- */
+$$("#tr-filter button").forEach(b=>b.onclick=()=>{
+  $$("#tr-filter button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  $$("#trouble details").forEach(d=>d.hidden=!(b.dataset.f==="all"||d.dataset.t.split(" ").includes(b.dataset.f)))});
+$("#m7-done").onclick=()=>{markDone("m7");$("#m7-done").textContent="C'est noté ✓"};
+if(done.m7)$("#m7-done").textContent="C'est noté ✓";
+
+/* ---------- étape 8 : mon atelier est prêt ---------- */
+const READY=[
+ ["all","J'ai fait clignoter une LED dans un simulateur (Tinkercad ou Wokwi)"],
+ ["cpp","L'IDE Arduino 2 est installé et affiché en français"],
+ ["cpp","Le paquet ESP32 est installé (seulement si j'ai un ESP32)"],
+ ["all","Ma carte apparaît dans la liste des ports quand je la branche"],
+ ["cpp","J'ai téléversé Blink et la LED de ma carte clignote"],
+ ["py","Thonny est installé et MicroPython est sur mon ESP32"],
+ ["py","led.value(1) tapé dans la console allume la LED"],
+ ["py","Mon programme est enregistré sur la carte sous main.py"],
+ ["all","J'ai un dossier Atelier rangé par niveau, avec des noms sans espaces"],
+ ["all","Je sais ouvrir le moniteur série ou la console pour voir les messages"]
+];
+let ready=LS.get("ready",{});
+window.readyRender=function(){
+  const l=document.documentElement.dataset.lang||"both";
+  const vis=READY.map((r,i)=>[r,i]).filter(([r])=>r[0]==="all"||l==="both"||r[0]===l);
+  $("#ready").innerHTML=vis.map(([r,i])=>`<label class="check" for="rd${i}"><input type="checkbox" id="rd${i}" ${ready[i]?"checked":""}><span>${r[1]}${l==="both"&&r[0]!=="all"?` <span class="tag">${r[0]==="cpp"?"C/C++":"Python"}</span>`:""}</span></label>`).join("");
+  vis.forEach(([r,i])=>$("#rd"+i).onchange=e=>{ready[i]=e.target.checked;LS.set("ready",ready);readyScore()});
+  readyScore();
+  function readyScore(){const n=vis.filter(([r,i])=>ready[i]).length;
+    $("#ready-res").textContent=n===vis.length?"Tout est prêt : tu peux commencer l'atelier !":`${n} / ${vis.length} prêts`}
+};
+
+/* ---------- init ---------- */
+setLang(startLang);
+pathRender();refreshDone();
+const start=(location.hash||"").slice(1)||LS.get("cur","accueil");
+show(mods.some(m=>m.id===start)?start:"accueil",false);
+})();
+</script>
+</body>
+</html>

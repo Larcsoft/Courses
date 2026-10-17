@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Apprivoiser un composant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<!-- Styles communs : à modifier une seule fois pour toutes les pages -->
+<link rel="stylesheet" href="../../../commun/base.css">
+<link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
+<style>
+/* Ajouts du module méthode : mêmes jetons que l'atelier */
+.steps{margin:0;padding-left:1.4rem;display:grid;gap:8px}
+.steps li::marker{font-family:var(--f-mono);color:var(--copper);font-weight:600}
+.kbd{font-family:var(--f-mono);font-size:.82em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--paper)}
+.ex{border:1.5px solid var(--line);border-radius:var(--r);background:var(--surface);padding:18px;display:grid;gap:12px;min-width:0}
+.ex>.label{font-weight:700}
+.ex.mid{border-color:#2B8FC4}.ex.mid>.label{color:#2B8FC4}
+.ex.hard{border-color:#8A4FBF}.ex.hard>.label{color:#8A4FBF}
+:root[data-theme="dark"] .ex.hard>.label{color:#C49AEB}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ex.mid>.label{color:#7CC4EC}:root:not([data-theme="light"]) .ex.hard>.label{color:#C49AEB}}
+.lvl-tag{display:inline-block;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:.05rem .55rem;border:1px solid currentColor}
+.zones{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.zone{border-radius:8px;padding:12px;background:var(--paper);border:1px solid var(--line);display:grid;gap:4px;align-content:start}
+.zone b{font-family:var(--f-display)}
+.zone .n{font-family:var(--f-mono);font-size:.75rem;color:var(--copper)}
+.wire{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.fiche{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.fiche input,.fiche select,.fiche textarea{width:100%}
+textarea{font:inherit;padding:.4rem .6rem;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);min-height:70px;resize:vertical}
+.board-top a.back{color:var(--pcb-ink);font-size:.86rem;text-decoration:none;border-bottom:1px solid var(--silk)}
+.res{display:grid;gap:10px}
+.res a{font-weight:700}
+@media print{.board,.rail,.foot-nav,.lang,.no-print{display:none!important}.wrap{display:block}section.mod{display:none!important}#m8{display:grid!important}#m8 .quiz,#m8 h3.qz{display:none}}
+</style>
+</head>
+<body>
+<header class="board">
+  <div class="board-in">
+    <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="board-top">
+      <div>
+        <p class="silk">Design PEI 5 · Niveau 1 · Méthode</p>
+        <h1>Apprivoiser un <span>composant</span></h1>
+        <p style="margin-top:6px"><a class="back" href="Atelier-Arduino-ESP32.html">← Retour à l'atelier Arduino &amp; ESP32</a></p>
+      </div>
+      <div class="lang" role="group" aria-label="Langage affiché">
+        <button id="lang-cpp" data-lang="cpp" aria-pressed="false">C/C++</button>
+        <button id="lang-both" data-lang="both" aria-pressed="true">Les deux</button>
+        <button id="lang-py" data-lang="py" aria-pressed="false">Python</button>
+      </div>
+    </div>
+    <div class="meter"><div class="bar" aria-hidden="true"><b id="meter-bar"></b></div><span id="meter-txt">0 / 8 parties terminées</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="rail" id="rail" aria-label="Parties de la méthode"></nav>
+  <main id="main">
+
+<!-- ================= ACCUEIL ================= -->
+<section class="mod" id="accueil" data-title="Bienvenue">
+  <p class="eyebrow">Méthode</p>
+  <h2>Un nouveau composant ? Pas de panique, une méthode.</h2>
+  <p class="lead">Chaque capteur est différent, mais la façon de l'apprivoiser est toujours la même : comprendre ce qu'il fait, trouver sa datasheet, le brancher correctement, le tester seul, puis l'intégrer à ton projet.</p>
+  <div class="ets" aria-label="Comprendre, brancher, tester">
+    <div style="background:#2B8FC4">COMPRENDRE<small>5 questions + la datasheet</small></div><span class="arrow">→</span>
+    <div style="background:#1F3A93">BRANCHER<small>broche par broche, sans rien deviner</small></div><span class="arrow">→</span>
+    <div style="background:#C46A22">TESTER SEUL<small>le programme le plus court</small></div>
+  </div>
+  <h3>Deux exemples suivis du début à la fin</h3>
+  <div class="grid2">
+    <div class="ex mid"><span class="label">Exemple 1 · accessible</span><h3 style="margin:0">Le capteur de distance HC-SR04</h3><p>Il mesure une distance avec des ultrasons, comme une chauve-souris. 4 broches, une formule simple, mais un piège de tension sur l'ESP32.</p></div>
+    <div class="ex hard"><span class="label">Exemple 2 · intermédiaire</span><h3 style="margin:0">Le module Bluetooth HC-05</h3><p>Il permet à ta carte de dialoguer sans fil avec un téléphone. Ce n'est pas un capteur : il reçoit et envoie des messages, par une liaison série, et cache lui aussi un piège de tension.</p></div>
+  </div>
+  <div class="note tip"><span class="label">Comment utiliser ce module</span><p>Chaque partie explique une étape de la méthode, puis l'applique aux deux exemples. Le sélecteur en haut affiche le code en C/C++, en Python ou les deux. Ta progression et ta fiche composant sont gardées sur cet appareil.</p></div>
+  <div class="row"><button class="btn copper" data-go="next">Commencer</button></div>
+</section>
+
+<!-- ================= 1 LES 5 QUESTIONS ================= -->
+<section class="mod" id="m1" data-title="Les 5 questions" hidden>
+  <p class="eyebrow">Partie 1</p>
+  <h2>La démarche en 5 questions</h2>
+  <p class="lead">Avant de brancher quoi que ce soit, réponds à ces cinq questions. Si tu ne sais pas répondre à l'une d'elles, c'est que tu dois encore lire la datasheet.</p>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Question</th><th>Pourquoi c'est important</th><th>HC-SR04</th><th>HC-05</th></tr></thead>
+    <tbody>
+      <tr><td>1. Que fait-il ?</td><td>Savoir ce qu'il mesure ou commande, et dans quelle unité.</td><td>Mesure une distance, de 2 à 400 cm</td><td>Échange des messages sans fil avec un téléphone, jusqu'à 10 m environ</td></tr>
+      <tr><td>2. Entrée ou sortie ?</td><td>Une entrée informe la carte, une sortie est commandée par elle.</td><td>Entrée (capteur), mais la carte doit aussi lui envoyer un signal (Trig)</td><td>Les deux : il reçoit des messages et en envoie</td></tr>
+      <tr><td>3. Numérique, analogique ou bus ?</td><td>Détermine la broche à utiliser et la façon de lire la valeur.</td><td>Numérique : on mesure la durée d'une impulsion</td><td>Liaison série : TX et RX, comme au module 7 de l'atelier</td></tr>
+      <tr><td>4. Quelle tension ?</td><td>Une mauvaise tension peut détruire le composant ou la carte.</td><td><b>5 V</b> (attention avec l'ESP32 en 3,3 V)</td><td><b>5 V</b> pour l'alimentation, mais <b>3,3 V</b> pour les signaux</td></tr>
+      <tr><td>5. Comment le brancher ?</td><td>Savoir quelle broche du composant va sur quelle broche de la carte.</td><td>VCC, Trig, Echo, GND</td><td>VCC, GND, TXD, RXD</td></tr>
+    </tbody></table></div>
+  <div class="lab">
+    <p class="label">Labo · Entraîne-toi sur d'autres composants</p>
+    <p>Pour chaque composant, indique comment la carte lit ou commande sa valeur.</p>
+    <div class="sort" id="sort1"></div>
+    <p id="sort1-res" class="score" aria-live="polite"></p>
+  </div>
+  <div class="note tip"><span class="label">Le savais-tu ?</span><p>Le même composant existe souvent seul (la <b>puce</b>) ou soudé sur une petite carte (le <b>module</b>). Le module ajoute des composants utiles : régulateur de tension, résistances, connecteur. Tu achètes presque toujours un module : c'est sa documentation qu'il faut lire en plus de celle de la puce.</p></div>
+  <div class="note py"><span class="label">Une 6ᵉ question : ma carte le fait-elle déjà ?</span><p>L'ESP32 a le <b>Wi-Fi et le Bluetooth intégrés</b> : pas besoin de module, c'est l'objet du niveau 4. Le HC-05 sert surtout à donner le Bluetooth à un Arduino Uno. Avant d'acheter un module, vérifie toujours dans le tableau des caractéristiques de ta carte.</p></div>
+</section>
+
+<!-- ================= 2 TROUVER LA DATASHEET ================= -->
+<section class="mod" id="m2" data-title="Trouver la datasheet" hidden>
+  <p class="eyebrow">Partie 2</p>
+  <h2>Trouver la bonne datasheet</h2>
+  <p class="lead">La datasheet (fiche technique) est la carte d'identité du composant, écrite par son fabricant. En général en anglais, souvent longue, mais c'est la seule source sûre.</p>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">La méthode</p>
+    <ol class="steps">
+      <li><b>Lis la référence</b> imprimée sur le composant ou sur son module, à la loupe si besoin. C'est elle qu'on cherche, pas le nom donné par le vendeur.</li>
+      <li><b>Cherche</b> « référence + datasheet », par exemple <code>HC-05 datasheet</code>.</li>
+      <li><b>Préfère</b> le site du fabricant, puis les grands distributeurs de composants (Mouser, DigiKey, LCSC), qui donnent le document officiel.</li>
+      <li><b>Cherche aussi la page du module</b> chez le vendeur ou chez Adafruit et SparkFun : elle donne le brochage du module et des exemples.</li>
+      <li><b>Vérifie</b> que le document parle bien de ta référence exacte, et enregistre-le en PDF dans le dossier de ton projet.</li>
+    </ol>
+  </div>
+  <div class="grid2">
+    <div class="ex mid"><span class="label">HC-SR04</span>
+      <p>Référence imprimée au dos du module. C'est un composant générique : il n'a <b>pas de fabricant unique</b>, et sa « datasheet » est une fiche de 3 pages diffusée par les distributeurs.</p>
+      <p><b>Piège :</b> il existe un <b>HC-SR04P</b> (ou « 3,3 V ») qui fonctionne de 3 à 5,5 V. Même look, mais pas le même branchement possible. Regarde bien la référence.</p></div>
+    <div class="ex hard"><span class="label">HC-05</span>
+      <p>Lui aussi est un module générique, construit autour d'une puce Bluetooth. Sa datasheet décrit le module et ses commandes ; la page du vendeur précise la tension acceptée.</p>
+      <p><b>Pièges :</b> le <b>HC-06</b> lui ressemble (4 broches, moins de réglages) et le <b>HM-10</b> utilise un autre Bluetooth (BLE). Regarde la référence imprimée au dos.</p></div>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Méfie-toi des sites qui recopient des datasheets au milieu de publicités et de boutons « Télécharger » : le fichier peut être faux ou d'une autre version. Un PDF qui porte le logo du fabricant est la bonne source.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m2"></div>
+</section>
+
+<!-- ================= 3 LIRE ================= -->
+<section class="mod" id="m3" data-title="Lire une datasheet" hidden>
+  <p class="eyebrow">Partie 3</p>
+  <h2>Lire une datasheet sans tout lire</h2>
+  <p class="lead">Personne ne lit une datasheet de la première à la dernière page. Pour démarrer, quatre zones suffisent. Le reste servira plus tard.</p>
+  <div class="zones">
+    <div class="zone"><span class="n">ZONE 1</span><b>Description</b><span>« Features », « General description ». Ce que fait le composant, en une page.</span></div>
+    <div class="zone"><span class="n">ZONE 2</span><b>Brochage</b><span>« Pin configuration », « Pin description ». Le nom et le rôle de chaque broche.</span></div>
+    <div class="zone"><span class="n">ZONE 3</span><b>Valeurs électriques</b><span>« Electrical characteristics », « Absolute maximum ratings ». Les tensions et courants à respecter, et les limites à ne jamais dépasser.</span></div>
+    <div class="zone"><span class="n">ZONE 4</span><b>Utilisation</b><span>« Typical application », « Timing diagram ». Un schéma de câblage ou la façon de dialoguer avec lui.</span></div>
+  </div>
+  <div class="grid2">
+    <div class="ex mid"><span class="label">HC-SR04 · ce qu'on y lit</span>
+      <div class="prose"><ul>
+        <li><b>Zone 1 :</b> mesure de 2 cm à 4 m, angle de mesure d'environ 15°.</li>
+        <li><b>Zone 2 :</b> VCC, Trig (déclenchement), Echo (réponse), GND.</li>
+        <li><b>Zone 3 :</b> alimentation <b>5 V</b>, environ 15 mA. La broche Echo renvoie donc du 5 V.</li>
+        <li><b>Zone 4 :</b> une impulsion de 10 µs sur Trig, puis Echo reste à l'état haut pendant le trajet aller-retour du son.</li>
+      </ul></div></div>
+    <div class="ex hard"><span class="label">HC-05 · ce qu'on y lit</span>
+      <div class="prose"><ul>
+        <li><b>Zone 1 :</b> Bluetooth classique, profil « port série » (SPP), portée d'environ 10 m.</li>
+        <li><b>Zone 2 :</b> VCC, GND, TXD (il émet), RXD (il reçoit). Les broches EN et STATE servent plus tard.</li>
+        <li><b>Zone 3 :</b> le module s'alimente en 5 V grâce à son régulateur, mais ses <b>signaux sont en 3,3 V</b> : RXD ne doit pas recevoir 5 V.</li>
+        <li><b>Zone 4 :</b> 9600 bauds par défaut, code d'appairage <code>1234</code> (parfois <code>0000</code>), et ce que signifie le clignotement de sa LED.</li>
+      </ul></div></div>
+  </div>
+  <div class="note py"><span class="label">Astuce pour l'anglais</span><p>Les mots qui reviennent le plus : <i>supply voltage</i> (tension d'alimentation), <i>current</i> (courant), <i>pin</i> (broche), <i>pull-up</i> (résistance de tirage), <i>typical</i> (valeur habituelle), <i>max</i> (à ne pas dépasser). Un traducteur en ligne fait le reste.</p></div>
+  <div class="lab">
+    <p class="label">Labo · Dans quelle zone chercher ?</p>
+    <div class="sort" id="sort3"></div>
+    <p id="sort3-res" class="score" aria-live="polite"></p>
+  </div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m3"></div>
+</section>
+
+<!-- ================= 4 BRANCHER ================= -->
+<section class="mod" id="m4" data-title="Brancher le composant" hidden>
+  <p class="eyebrow">Partie 4</p>
+  <h2>Brancher à partir de la datasheet</h2>
+  <p class="lead">On ne branche jamais « au hasard » ou « comme sur la photo ». On relie chaque broche du composant à une broche de la carte en sachant pourquoi.</p>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">La méthode, carte débranchée</p>
+    <ol class="steps">
+      <li><b>L'alimentation :</b> relie VCC (ou VIN) à la tension lue en zone 3, et GND à GND. GND est commun à tout le montage.</li>
+      <li><b>Le signal :</b> relie chaque broche de données à une broche libre de la carte, du bon type (numérique, analogique, SDA/SCL).</li>
+      <li><b>La tension des signaux :</b> un signal de 5 V ne doit jamais arriver sur une broche de l'ESP32 (3,3 V maximum).</li>
+      <li><b>Les résistances :</b> une LED en a toujours besoin, un bouton aussi (ou la résistance interne <code>INPUT_PULLUP</code>). La datasheet ou le guide du module dit s'il en faut d'autres.</li>
+      <li><b>Note ton câblage</b> dans un tableau, ou dessine-le dans Wokwi ou Tinkercad avant de le réaliser.</li>
+    </ol>
+  </div>
+  <h3>Le câblage des deux exemples</h3>
+  <div class="grid2">
+    <div class="ex mid"><span class="label">HC-SR04</span>
+      <div class="scroll"><table class="t" style="min-width:0">
+        <thead><tr><th>Broche</th><th>Arduino Uno</th><th>ESP32</th></tr></thead>
+        <tbody>
+          <tr><td>VCC</td><td>5V</td><td>VIN (5 V de l'USB)</td></tr>
+          <tr><td>Trig</td><td>9</td><td>GPIO 5</td></tr>
+          <tr><td>Echo</td><td>10</td><td>GPIO 18 <b>via un pont diviseur</b></td></tr>
+          <tr><td>GND</td><td>GND</td><td>GND</td></tr>
+        </tbody></table></div>
+      <p>Sur l'Uno, tout est en 5 V : on relie directement. Sur l'ESP32, Echo renvoie 5 V : il faut l'abaisser à 3,3 V avec deux résistances.</p></div>
+    <div class="ex hard"><span class="label">HC-05</span>
+      <div class="scroll"><table class="t" style="min-width:0">
+        <thead><tr><th>Broche</th><th>Arduino Uno</th><th>ESP32</th></tr></thead>
+        <tbody>
+          <tr><td>VCC</td><td>5V</td><td>VIN (5 V de l'USB)</td></tr>
+          <tr><td>GND</td><td>GND</td><td>GND</td></tr>
+          <tr><td>TXD</td><td>10 (RX logiciel)</td><td>GPIO 16 (RX2)</td></tr>
+          <tr><td>RXD</td><td>11 <b>via un pont diviseur</b></td><td>GPIO 17 (TX2), en direct</td></tr>
+        </tbody></table></div>
+      <p>On <b>croise</b> : TXD du module va sur une broche qui reçoit, RXD sur une broche qui émet. Sur l'Uno, la broche 11 émet du 5 V : le même pont diviseur que pour le HC-SR04 protège RXD. L'ESP32 émet déjà en 3,3 V.</p></div>
+  </div>
+  <div class="lab">
+    <p class="label">Calculatrice · Le pont diviseur de tension</p>
+    <p>Deux résistances en série divisent la tension : signal 5 V → R1 → broche 3,3 V → R2 → GND. La broche reçoit <code>5 V × R2 / (R1 + R2)</code>. Il sert pour Echo du HC-SR04 vers l'ESP32, et pour RXD du HC-05 depuis l'Uno. Trouve un couple qui donne entre 3 et 3,3 V.</p>
+    <div class="grid2">
+      <div class="field"><label for="d-r1">R1 (côté signal 5 V)</label><select id="d-r1"><option>470</option><option selected>1000</option><option>2000</option><option>4700</option></select></div>
+      <div class="field"><label for="d-r2">R2 (côté GND)</label><select id="d-r2"><option>470</option><option>1000</option><option selected>1000</option><option>2000</option><option>4700</option><option>10000</option></select></div>
+    </div>
+    <div class="grid3">
+      <div class="stat"><span>Tension sur la broche</span><b id="d-v"></b><span>sur 5 V en entrée</span></div>
+      <div class="stat"><span>Verdict pour l'ESP32</span><b id="d-ok"></b><span id="d-why"></span></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="label">Labo · Câble le HC-SR04 sur l'ESP32</p>
+    <p>Choisis où va chaque broche du capteur, puis vérifie.</p>
+    <div class="wire" id="wire"></div>
+    <div class="row"><button class="btn" id="wire-check">Vérifier mon câblage</button></div>
+    <div id="wire-res" aria-live="polite"></div>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Inverser VCC et GND peut détruire un capteur en une seconde. Avant de brancher l'USB, suis chaque fil du doigt, de la datasheet jusqu'à la carte.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m4"></div>
+</section>
+
+<!-- ================= 5 TESTER SEUL ================= -->
+<section class="mod" id="m5" data-title="Tester le composant seul" hidden>
+  <p class="eyebrow">Partie 5</p>
+  <h2>Valider le composant tout seul</h2>
+  <p class="lead">Un nouveau composant se teste <b>seul</b>, sur un montage minimal, avec le programme le plus court possible. Si ça ne marche pas, il n'y a que trois suspects : le composant, le câblage ou ce petit programme.</p>
+  <div class="lab">
+    <p class="label">Checklist · Avant de mettre sous tension</p>
+    <div id="pre"></div>
+    <p id="pre-res" class="score" aria-live="polite"></p>
+  </div>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">La méthode du test seul</p>
+    <ol class="steps">
+      <li><b>Teste la carte d'abord</b> avec Blink : si la LED clignote, la carte, le câble et le logiciel vont bien.</li>
+      <li><b>Branche uniquement le nouveau composant</b>, rien d'autre.</li>
+      <li><b>Lance un programme minimal</b> qui affiche la valeur brute au moniteur série ou dans la console.</li>
+      <li><b>Compare à une valeur connue</b> : ta main à 10 cm, la température de la pièce.</li>
+      <li><b>Seulement ensuite</b>, intègre le composant à ton projet, une nouveauté à la fois.</li>
+    </ol>
+  </div>
+  <div class="grid2">
+    <div class="ex mid"><span class="label">HC-SR04 · test seul</span>
+      <p>Le programme minimal de la partie 6 affiche la distance deux fois par seconde.</p>
+      <div class="prose"><ul>
+        <li><b>Attendu :</b> main à 10 cm → environ 10 cm ; vers le plafond → une grande valeur stable.</li>
+        <li><b>Toujours 0 ou « pas d'écho » :</b> Trig et Echo inversés, ou pont diviseur mal câblé.</li>
+        <li><b>Valeurs qui sautent :</b> objet trop petit, trop mou (un tissu absorbe le son) ou hors de l'angle de 15°.</li>
+      </ul></div></div>
+    <div class="ex hard"><span class="label">HC-05 · test seul en trois temps</span>
+      <div class="prose"><ol class="steps">
+        <li><b>Sa LED :</b> un clignotement rapide veut dire qu'il est alimenté et attend un téléphone.</li>
+        <li><b>L'appairage :</b> sur un téléphone Android, appaire « HC-05 » (code <code>1234</code>), puis ouvre une application de terminal Bluetooth série. La LED clignote alors lentement.</li>
+        <li><b>Le pont série :</b> avec le programme ci-dessous, ce que tu tapes sur le téléphone s'affiche au moniteur série, et inversement.</li>
+      </ol></div>
+      <p><b>Rien ne s'affiche :</b> TXD et RXD non croisés, ou vitesse différente de 9600 bauds.</p></div>
+  </div>
+  <h3>Le programme de test du HC-05 : un pont série</h3>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>#include &lt;SoftwareSerial.h&gt;
+
+SoftwareSerial bt(10, 11);           // RX, TX vers le HC-05 (Uno)
+
+void setup() {
+  Serial.begin(9600);                // le moniteur série
+  bt.begin(9600);                    // le HC-05
+  Serial.println("Prêt : connecte ton téléphone");
+}
+
+void loop() {
+  if (bt.available()) {              // téléphone → moniteur
+    Serial.write(bt.read());
+  }
+  if (Serial.available()) {          // moniteur → téléphone
+    bt.write(Serial.read());
+  }
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import UART
+import time
+
+bt = UART(2, baudrate=9600, tx=17, rx=16)   # vers le HC-05
+bt.write("Bonjour depuis l'ESP32\n")
+
+while True:
+    if bt.any():                     # le téléphone a écrit ?
+        print("Reçu :", bt.read())
+    time.sleep(0.1)</pre></figure>
+  </div>
+  <div class="note tip"><span class="label">Valider sans matériel</span><p>Wokwi propose le HC-SR04 dans sa liste de composants : tu peux y tester ton câblage et ton programme avant de toucher un fil. Pour un composant absent du simulateur, compare ton montage au schéma d'un guide fiable (partie 7).</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m5"></div>
+</section>
+
+<!-- ================= 6 CODE ================= -->
+<section class="mod" id="m6" data-title="De la datasheet au code" hidden>
+  <p class="eyebrow">Partie 6</p>
+  <h2>De la datasheet au code</h2>
+  <p class="lead">Deux cas fréquents : tu traduis la datasheet en quelques lignes (HC-SR04), ou tu réutilises un outil que tu connais déjà, ici la liaison série (HC-05). Pour les composants plus complexes, on utilise une <b>bibliothèque</b> écrite par d'autres.</p>
+  <div class="ex mid"><span class="label">HC-SR04 · on code soi-même</span>
+    <p>Zone 4 de la datasheet : une impulsion de 10 µs sur Trig, puis Echo reste haut pendant l'aller-retour du son. Le son parcourt 0,034 cm par microseconde, et on divise par 2 pour n'avoir que l'aller :</p>
+    <p style="font-family:var(--f-mono);font-weight:600">distance (cm) = durée (µs) × 0,034 / 2</p>
+    <div class="code-pair">
+      <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>const int TRIG = 9;                  // ESP32 : 5
+const int ECHO = 10;                 // ESP32 : 18 (via le pont diviseur)
+
+void setup() {
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(TRIG, LOW);           // impulsion de 10 µs
+  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+  long duree = pulseIn(ECHO, HIGH, 30000);   // en µs, 30 ms max
+  float distance = duree * 0.034 / 2;
+  Serial.print("Distance : ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(500);
+}</pre></figure>
+      <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import Pin, time_pulse_us
+import time
+
+trig = Pin(5, Pin.OUT)
+echo = Pin(18, Pin.IN)               # via le pont diviseur
+
+while True:
+    trig.value(0)                    # impulsion de 10 µs
+    time.sleep_us(2)
+    trig.value(1)
+    time.sleep_us(10)
+    trig.value(0)
+    duree = time_pulse_us(echo, 1, 30000)   # en µs, 30 ms max
+    if duree &gt; 0:
+        print("Distance :", duree * 0.034 / 2, "cm")
+    else:
+        print("Pas d'écho")
+    time.sleep(0.5)</pre></figure>
+    </div>
+  </div>
+  <div class="ex hard"><span class="label">HC-05 · on réutilise la liaison série</span>
+    <p>Pour la carte, le HC-05 est un simple <b>port série sans fil</b> : ce que le téléphone envoie arrive comme des caractères, exactement comme au module 7 de l'atelier. Ce programme allume la LED quand on envoie <code>1</code> et l'éteint avec <code>0</code>.</p>
+    <div class="code-pair">
+      <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>#include &lt;SoftwareSerial.h&gt;
+
+SoftwareSerial bt(10, 11);           // RX, TX (Uno)
+
+void setup() {
+  pinMode(13, OUTPUT);
+  Serial.begin(9600);
+  bt.begin(9600);
+}
+
+void loop() {
+  if (bt.available()) {
+    char c = bt.read();              // un caractère reçu
+    Serial.println(c);               // pour vérifier au moniteur
+    if (c == '1') {
+      digitalWrite(13, HIGH);
+      bt.println("LED allumée");     // réponse au téléphone
+    }
+    if (c == '0') {
+      digitalWrite(13, LOW);
+      bt.println("LED éteinte");
+    }
+  }
+}</pre></figure>
+      <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import UART, Pin
+import time
+
+led = Pin(2, Pin.OUT)
+bt = UART(2, baudrate=9600, tx=17, rx=16)
+
+while True:
+    if bt.any():
+        msg = bt.read().strip()      # par exemple b'1'
+        print("Reçu :", msg)
+        if msg == b"1":
+            led.value(1)
+            bt.write("LED allumée\n")   # réponse au téléphone
+        elif msg == b"0":
+            led.value(0)
+            bt.write("LED éteinte\n")
+    time.sleep(0.1)</pre></figure>
+    </div>
+    <p class="only-cpp" style="color:var(--muted)">Sur l'ESP32 en C/C++, le Bluetooth est intégré : on utiliserait plutôt la bibliothèque BluetoothSerial fournie avec le paquet ESP32, sans module.</p>
+  </div>
+  <div class="note tip"><span class="label">Choisir une bibliothèque</span><p>Préfère celle du fabricant du module ou d'un grand nom (Adafruit, SparkFun), récente et avec des exemples. Ouvre toujours son <b>exemple</b> (Fichier › Exemples dans l'IDE Arduino) avant d'écrire ton propre code.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m6"></div>
+</section>
+
+<!-- ================= 7 RESSOURCES ================= -->
+<section class="mod" id="m7" data-title="Les ressources" hidden>
+  <p class="eyebrow">Partie 7</p>
+  <h2>Les ressources incontournables</h2>
+  <p class="lead">Quand tu bloques, ne cherche pas au hasard. Selon ta question, il y a un bon endroit où chercher.</p>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Je cherche…</th><th>Où chercher</th><th>Pourquoi</th></tr></thead>
+    <tbody>
+      <tr><td>La datasheet d'un composant</td><td>Le site du fabricant, puis <a href="https://www.mouser.fr" target="_blank" rel="noopener">Mouser</a>, <a href="https://www.digikey.fr" target="_blank" rel="noopener">DigiKey</a>, <a href="https://www.lcsc.com" target="_blank" rel="noopener">LCSC</a></td><td>Le document officiel, dans sa dernière version.</td></tr>
+      <tr><td>Les broches de l'Arduino</td><td><a href="https://docs.arduino.cc" target="_blank" rel="noopener">docs.arduino.cc</a></td><td>Le brochage officiel de chaque carte Arduino.</td></tr>
+      <tr><td>Les broches de l'ESP32</td><td><a href="https://docs.espressif.com" target="_blank" rel="noopener">docs.espressif.com</a> et l'article « ESP32 Pinout Reference » de <a href="https://randomnerdtutorials.com" target="_blank" rel="noopener">Random Nerd Tutorials</a></td><td>Quelles broches utiliser, et lesquelles éviter.</td></tr>
+      <tr><td>Un guide de câblage pas à pas</td><td><a href="https://randomnerdtutorials.com" target="_blank" rel="noopener">Random Nerd Tutorials</a>, <a href="https://learn.adafruit.com" target="_blank" rel="noopener">Adafruit Learn</a>, les « Hookup Guides » de <a href="https://learn.sparkfun.com" target="_blank" rel="noopener">SparkFun</a></td><td>Schémas et code testés, souvent en C/C++ et en MicroPython.</td></tr>
+      <tr><td>Une fonction du langage Arduino</td><td><a href="https://docs.arduino.cc/language-reference/" target="_blank" rel="noopener">Référence du langage Arduino</a></td><td>Chaque fonction expliquée, avec un exemple.</td></tr>
+      <tr><td>Une fonction MicroPython</td><td><a href="https://docs.micropython.org/en/latest/esp32/quickref.html" target="_blank" rel="noopener">Référence rapide ESP32 de MicroPython</a></td><td>Broches, I2C, PWM, Wi-Fi : tout sur une page.</td></tr>
+      <tr><td>Vérifier un montage sans matériel</td><td><a href="https://wokwi.com" target="_blank" rel="noopener">Wokwi</a> (ESP32 et Uno), <a href="https://www.tinkercad.com" target="_blank" rel="noopener">Tinkercad</a> (Uno)</td><td>Tester câblage et code sans rien risquer.</td></tr>
+      <tr><td>Demander de l'aide</td><td><a href="https://forum.arduino.cc" target="_blank" rel="noopener">forum.arduino.cc</a>, section en français</td><td>Une grande communauté qui répond vite.</td></tr>
+    </tbody></table></div>
+  <div class="panel">
+    <p class="label" style="color:var(--copper)">Bien poser sa question sur un forum</p>
+    <ol class="steps">
+      <li>Cherche d'abord si la question a déjà été posée, avec le message d'erreur exact.</li>
+      <li>Donne la <b>carte</b>, le <b>composant</b> (référence exacte) et le <b>logiciel</b> utilisés.</li>
+      <li>Joins une <b>photo nette du montage</b> ou un schéma (une capture de Wokwi convient).</li>
+      <li>Colle ton <b>code complet</b> dans un bloc de code, et le <b>message d'erreur</b> complet.</li>
+      <li>Explique ce que tu attendais, ce qui se passe à la place, et ce que tu as déjà essayé.</li>
+    </ol>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Une vidéo ou un article sans schéma ni référence exacte du composant est peu fiable. Vérifie toujours le brochage d'un guide avec la datasheet : deux modules qui se ressemblent n'ont pas forcément les broches dans le même ordre.</p></div>
+  <div class="row"><button class="btn copper" id="m7-done">J'ai noté mes ressources</button></div>
+</section>
+
+<!-- ================= 8 BILAN ================= -->
+<section class="mod" id="m8" data-title="Fiche composant et bilan" hidden>
+  <p class="eyebrow">Partie 8 · Bilan</p>
+  <h2>Ma fiche composant</h2>
+  <p class="lead">Remplis cette fiche pour chaque nouveau composant. Elle résume la méthode et devient ton aide-mémoire. Elle est gardée sur cet appareil, et tu peux l'imprimer.</p>
+  <div class="panel">
+    <div class="row no-print"><span style="color:var(--muted)">Remplir avec un exemple :</span><button class="btn ghost" data-fill="hc">HC-SR04</button><button class="btn ghost" data-fill="bt">HC-05</button><button class="btn ghost" data-fill="">Vider</button></div>
+    <div class="fiche" id="fiche"></div>
+    <div class="row no-print"><button class="btn" id="f-print">Imprimer la fiche</button></div>
+  </div>
+  <h3 class="qz">Quiz final</h3>
+  <div class="quiz" data-quiz="m8"></div>
+  <div class="panel no-print" style="background:var(--copper-soft);border-color:var(--copper)">
+    <p class="label" style="color:var(--copper-ink)">Et maintenant</p>
+    <p>Applique la méthode à la photorésistance de la mission « lampe éco-intelligente » de l'atelier, puis à chaque capteur du niveau 2.</p>
+    <div class="row"><a class="btn copper" href="Atelier-Arduino-ESP32.html" style="text-decoration:none">Ouvrir l'atelier Arduino &amp; ESP32</a></div>
+  </div>
+</section>
+
+    <div class="foot-nav" id="foot">
+      <button class="btn ghost" id="prev">← Précédent</button>
+      <button class="btn" id="next">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+const LS = {get(k,d){try{const v=localStorage.getItem("aam:"+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+            set(k,v){try{localStorage.setItem("aam:"+k,JSON.stringify(v))}catch(e){}}};
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const fr=(n,d=2)=>n.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+
+/* ---------- langage (même réglage que l'atelier) ---------- */
+function setLang(l){document.documentElement.dataset.lang=l;$$(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===l));try{localStorage.setItem("aae1:lang",JSON.stringify(l))}catch(e){}}
+$$(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+let startLang="both";try{const v=localStorage.getItem("aae1:lang");if(v)startLang=JSON.parse(v)}catch(e){}
+setLang(startLang);
+
+/* ---------- coloration du code ---------- */
+function hl(code,lang){
+  const re = lang==="py"
+    ? /(#.*$)|("(?:[^"\\]|\\.)*")|\b(\d+(?:\.\d+)?|0x[0-9A-Fa-f]+)\b|\b(from|import|while|True|False|if|else|elif|for|in|range|def|return|not|and|or|print)\b/gm
+    : /(\/\/.*$)|("(?:[^"\\]|\\.)*")|\b(0x[0-9A-Fa-f]+|\d+(?:\.\d+)?)\b|\b(void|int|long|byte|float|char|const|if|else|for|while|return|HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP|true|false|HEX)\b|(#include)/gm;
+  let out="",last=0;
+  for(const m of code.matchAll(re)){out+=esc(code.slice(last,m.index));const c=m[1]?"c":m[2]?"s":m[3]?"n":"k";out+=`<span class="t-${c}">${esc(m[0])}</span>`;last=m.index+m[0].length}
+  return out+esc(code.slice(last));
+}
+$$("figure.code pre").forEach(pre=>{const code=pre.textContent,lang=pre.closest(".code").dataset.l;pre.dataset.raw=code;
+  pre.innerHTML=code.split("\n").map((l,i)=>`<span class="ln" data-i="${i}">${hl(l,lang)||" "}</span>`).join("")});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("figure.code figcaption button"); if(!b)return;
+  const raw=b.closest("figure").querySelector("pre").dataset.raw;
+  const done=()=>{b.textContent="Copié";setTimeout(()=>b.textContent="Copier",1400)};
+  try{navigator.clipboard.writeText(raw).then(done,()=>selectPre(b))}catch(err){selectPre(b)}
+});
+function selectPre(b){const r=document.createRange();r.selectNodeContents(b.closest("figure").querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Ctrl+C"}
+
+/* ---------- navigation ---------- */
+const mods=$$("section.mod"), rail=$("#rail"), TOTAL=mods.length-1;
+let done=LS.get("done",{});
+mods.forEach((m,i)=>{
+  const b=document.createElement("button");b.dataset.id=m.id;
+  b.innerHTML=`<span class="n">${i===0?"··":String(i).padStart(2,"0")}</span><span class="t">${m.dataset.title}</span><span class="ck" aria-hidden="true"></span>`;
+  b.setAttribute("aria-label",m.dataset.title);b.onclick=()=>show(m.id);rail.appendChild(b);
+});
+let cur=0;
+function show(id,scroll=true){
+  const i=Math.max(0,mods.findIndex(m=>m.id===id));cur=i;
+  mods.forEach((m,j)=>m.hidden=j!==i);
+  $$("#rail button").forEach((b,j)=>b.setAttribute("aria-current",j===i));
+  $("#prev").disabled=i===0;$("#next").disabled=i===mods.length-1;
+  $("#next").textContent=i===mods.length-1?"Fin de la méthode":"Suivant →";
+  try{history.replaceState(null,"","#"+mods[i].id)}catch(e){}
+  LS.set("cur",mods[i].id);
+  if(scroll) window.scrollTo({top:0,behavior:"smooth"});
+}
+$("#prev").onclick=()=>show(mods[cur-1].id);
+$("#next").onclick=()=>show(mods[cur+1].id);
+$$("[data-go=next]").forEach(b=>b.onclick=()=>show(mods[cur+1].id));
+function markDone(id){done[id]=true;LS.set("done",done);refreshDone()}
+function refreshDone(){
+  $$("#rail button").forEach(b=>b.classList.toggle("done",!!done[b.dataset.id]));
+  const n=mods.slice(1).filter(m=>done[m.id]).length;
+  $("#meter-bar").style.width=(n/TOTAL*100)+"%";$("#meter-txt").textContent=`${n} / ${TOTAL} parties terminées`;
+}
+
+/* ---------- quiz ---------- */
+const QUIZ={
+ m2:[{q:"Pour trouver la datasheet, on cherche…",o:["le nom donné par le vendeur","la référence imprimée sur le composant","la couleur du module"],a:1,w:"La référence exacte (HC-05, HC-SR04P…) est la seule clé fiable."},
+     {q:"Quelle est la source la plus sûre ?",o:["Un PDF au logo du fabricant","Une vidéo sans schéma","Un site rempli de publicités"],a:0,w:"Le fabricant, ou un grand distributeur qui reprend son document officiel."},
+     {q:"Tu veux le Bluetooth sur ton ESP32. Que vérifies-tu d'abord ?",o:["Si l'ESP32 ne l'a pas déjà intégré","La couleur du module","La longueur du câble"],a:0,w:"L'ESP32 a déjà le Wi-Fi et le Bluetooth : le HC-05 sert surtout à l'Uno."}],
+ m3:[{q:"Dans quelle zone trouver la tension d'alimentation ?",o:["Description","Brochage","Valeurs électriques"],a:2,w:"« Electrical characteristics » et « Absolute maximum ratings »."},
+     {q:"« Absolute maximum ratings » indique…",o:["les valeurs conseillées","les limites à ne jamais dépasser","les prix"],a:1,w:"Au-delà, le composant peut être détruit."},
+     {q:"Le HC-05 s'alimente en 5 V. Quelle tension sa broche RXD accepte-t-elle ?",o:["3,3 V","5 V sans problème","12 V"],a:0,w:"Ses signaux sont en 3,3 V : depuis l'Uno, il faut un pont diviseur."}],
+ m4:[{q:"La broche Echo du HC-SR04 renvoie 5 V. Sur l'ESP32, il faut…",o:["la relier directement","un pont diviseur de tension","une LED"],a:1,w:"Les broches de l'ESP32 supportent 3,3 V au maximum."},
+     {q:"5 V × 2000 / (1000 + 2000) = ?",o:["2,5 V","3,33 V","5 V"],a:1,w:"R1 = 1 kΩ et R2 = 2 kΩ donnent environ 3,3 V : parfait pour l'ESP32."},
+     {q:"La broche TXD du HC-05 se relie à…",o:["une broche qui reçoit (RX) sur la carte","une broche qui émet (TX) sur la carte","GND"],a:0,w:"On croise TX et RX, comme au module 7 de l'atelier."}],
+ m5:[{q:"Pourquoi tester un composant seul ?",o:["Pour aller plus vite à la fin","Pour limiter les suspects en cas de problème","Parce que la carte ne supporte qu'un composant"],a:1,w:"Seuls restent le composant, son câblage et un petit programme."},
+     {q:"La LED du HC-05 clignote très vite. Cela veut dire…",o:["qu'il est alimenté et attend un appairage","qu'il est connecté","qu'il est cassé"],a:0,w:"Une fois connecté, elle clignote lentement."},
+     {q:"Ton iPhone ne voit pas le HC-05. Pourquoi ?",o:["L'iPhone ne propose pas ce Bluetooth « port série » classique","Le HC-05 est grillé","Il manque le Wi-Fi"],a:0,w:"Teste avec un téléphone Android ou un ordinateur. Pour l'iPhone, il faut un module BLE comme le HM-10."}],
+ m6:[{q:"Une durée d'écho de 580 µs correspond à…",o:["environ 10 cm","environ 58 cm","environ 1 m"],a:0,w:"580 × 0,034 / 2 ≈ 9,9 cm."},
+     {q:"Pourquoi le HC-05 n'a-t-il pas besoin d'une bibliothèque spéciale ?",o:["C'est une liaison série : on lit et on écrit des caractères","Il ne transmet rien","Il fonctionne en Wi-Fi"],a:0,w:"On réutilise ce qu'on sait déjà du module 7 de l'atelier."},
+     {q:"Avant d'écrire ton code avec une nouvelle bibliothèque, tu…",o:["ouvres son exemple","supprimes Blink","changes de carte"],a:0,w:"L'exemple montre la bonne façon de l'utiliser."}],
+ m8:[{q:"Quelle est la première étape face à un nouveau composant ?",o:["Le brancher pour voir","Répondre aux 5 questions avec la datasheet","Écrire tout le projet"],a:1,w:"Comprendre avant de brancher."},
+     {q:"Un module indique « VIN 3.3–5 V ». Cela veut dire…",o:["qu'il a un régulateur et accepte les deux","qu'il faut deux alimentations","qu'il ne marche qu'en 4 V"],a:0,w:"Le régulateur abaisse le 5 V pour la puce."},
+     {q:"Un composant inconnu ne répond pas. Tu…",o:["changes tout d'un coup","testes la carte avec Blink, puis le composant seul","achètes une autre carte"],a:1,w:"Une seule chose à la fois, du plus simple au plus complexe."},
+     {q:"Où chercher le brochage officiel d'une ESP32 ?",o:["docs.espressif.com","Dans le moniteur série","Sur l'étiquette du câble"],a:0,w:"La documentation du fabricant, complétée par un guide fiable."},
+     {q:"Que faut-il joindre à une question sur un forum ?",o:["Seulement « ça marche pas »","La référence du composant, une photo du montage, le code et l'erreur","Son mot de passe"],a:1,w:"Plus ta question est précise, plus la réponse est rapide."}]
+};
+let qans=LS.get("quiz",{});
+$$(".quiz").forEach(box=>{
+  const id=box.dataset.quiz, qs=QUIZ[id]; qans[id]=qans[id]||{};
+  qs.forEach((q,i)=>{
+    const d=document.createElement("div");d.className="q";
+    d.innerHTML=`<p class="qt">${i+1}. ${q.q}</p><div class="opts">${q.o.map((o,j)=>`<button data-j="${j}">${o}</button>`).join("")}</div><p class="why" hidden></p>`;
+    const btns=[...d.querySelectorAll(".opts button")];
+    const apply=j=>{btns.forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add("good");else if(k===j)b.classList.add("wrong")});
+      const w=d.querySelector(".why");w.hidden=false;w.innerHTML=(j===q.a?"<b style='color:var(--ok)'>Bravo.</b> ":"<b style='color:var(--bad)'>Pas tout à fait.</b> ")+q.w};
+    btns.forEach(b=>b.onclick=()=>{const j=+b.dataset.j;qans[id][i]=j;LS.set("quiz",qans);apply(j);score()});
+    if(qans[id][i]!==undefined) apply(qans[id][i]);
+    box.appendChild(d);
+  });
+  const s=document.createElement("div");s.className="row";
+  s.innerHTML=`<p class="score" aria-live="polite"></p><button class="btn ghost" hidden>Recommencer le quiz</button>`;box.appendChild(s);
+  s.querySelector("button").onclick=()=>{qans[id]={};LS.set("quiz",qans);
+    box.querySelectorAll(".q").forEach(q=>{q.querySelectorAll(".opts button").forEach(b=>{b.disabled=false;b.classList.remove("good","wrong")});q.querySelector(".why").hidden=true});
+    s.querySelector("p").textContent="";s.querySelector("button").hidden=true;s.classList.remove("win")};
+  function score(){
+    const n=Object.keys(qans[id]).length, ok=qs.filter((q,i)=>qans[id][i]===q.a).length;
+    if(n===qs.length){s.querySelector("p").textContent=`Score : ${ok} / ${qs.length}`+(ok===qs.length?" · parfait !":ok>=qs.length/2?" · bien joué":" · relis la partie et réessaie");
+      s.querySelector("button").hidden=false;s.classList.add("win");markDone(box.closest("section").id)}
+  }
+  score();
+});
+
+/* ---------- jeux de tri ---------- */
+function sortGame(el,res,items,cats,onDone){
+  let st={};
+  items.forEach((it,i)=>{
+    const d=document.createElement("div");d.className="it";
+    d.innerHTML=`<span>${it[0]}</span><span class="row">${cats.map(c=>`<button>${c}</button>`).join("")}</span>`;
+    d.querySelectorAll("button").forEach(b=>b.onclick=()=>{st[i]=b.textContent===it[1];d.className="it "+(st[i]?"ok":"ko");
+      d.querySelector("span").innerHTML=it[0]+(st[i]?"":` <small style="color:var(--bad)">→ réponse : ${it[1]}</small>`);
+      const n=Object.keys(st).length;if(n===items.length){const k=Object.values(st).filter(Boolean).length;$(res).textContent=`${k} / ${items.length} bonnes réponses`;if(onDone)onDone()}});
+    $(el).appendChild(d);
+  });
+}
+sortGame("#sort1","#sort1-res",[["Bouton-poussoir","Numérique"],["Potentiomètre","Analogique"],["Photorésistance","Analogique"],["Écran OLED (SDA, SCL)","Série ou bus"],["Module Bluetooth HC-05 (TX, RX)","Série ou bus"],["LED","Numérique"],["Capteur de température LM35","Analogique"],["Capteur de mouvement PIR","Numérique"]],["Numérique","Analogique","Série ou bus"],()=>markDone("m1"));
+sortGame("#sort3","#sort3-res",[["Quelle broche est l'alimentation ?","Brochage"],["Quelle tension maximale supporte-t-il ?","Valeurs électriques"],["Que mesure-t-il, et jusqu'où ?","Description"],["Comment déclencher une mesure ?","Utilisation"],["Quel courant consomme-t-il ?","Valeurs électriques"],["Où brancher la résistance conseillée ?","Utilisation"]],["Description","Brochage","Valeurs électriques","Utilisation"]);
+
+/* ---------- partie 4 : pont diviseur ---------- */
+function div(){
+  const r1=+$("#d-r1").value,r2=+$("#d-r2").value,v=5*r2/(r1+r2);
+  $("#d-v").textContent=fr(v)+" V";
+  let ok,why;
+  if(v>3.6){ok='<span class="pill bad">DANGER</span>';why="plus de 3,3 V : la broche risque d'être abîmée"}
+  else if(v>=2.5){ok='<span class="pill ok">OK</span>';why="assez haut pour être lu comme HIGH, sans danger"}
+  else {ok='<span class="pill warn">Trop bas</span>';why="l'ESP32 risque de ne pas voir le signal HIGH"}
+  $("#d-ok").innerHTML=ok;$("#d-why").textContent=why;
+}
+["d-r1","d-r2"].forEach(i=>$("#"+i).onchange=div);div();
+
+/* ---------- partie 4 : câblage ---------- */
+const OPTS=["3V3","VIN (5 V)","GND","GPIO 5","GPIO 18 en direct","GPIO 18 via le pont diviseur"];
+const WIRE=[["VCC","VIN (5 V)"],["Trig","GPIO 5"],["Echo","GPIO 18 via le pont diviseur"],["GND","GND"]];
+$("#wire").innerHTML=WIRE.map((w,i)=>`<div class="field"><label for="w${i}">Broche ${w[0]} du capteur → ESP32 :</label><select id="w${i}"><option value="">choisir…</option>${OPTS.map(o=>`<option>${o}</option>`).join("")}</select></div>`).join("");
+$("#wire-check").onclick=()=>{
+  const v=WIRE.map((w,i)=>$("#w"+i).value);
+  if(v.some(x=>!x)){$("#wire-res").innerHTML='<p style="color:var(--warn)">Choisis une broche pour chacun des quatre fils.</p>';return}
+  const msg=[];
+  if(v[0]==="GND"||v[3]==="VIN (5 V)"||v[3]==="3V3")msg.push("VCC et GND sont inversés ou mal placés : c'est le court-circuit qui détruit un capteur.");
+  if(v[0]==="3V3")msg.push("Le HC-SR04 a besoin de 5 V (zone 3 de sa datasheet) : en 3,3 V il mesure mal ou pas du tout.");
+  if(v[2]==="GPIO 18 en direct")msg.push("Echo renvoie 5 V : en direct, il peut abîmer la broche de l'ESP32. Passe par le pont diviseur.");
+  if(v[1]==="GPIO 18 via le pont diviseur"||v[2]==="GPIO 5")msg.push("Trig et Echo sont inversés : la carte envoie l'impulsion sur Trig et écoute la réponse sur Echo.");
+  const ok=v.every((x,i)=>x===WIRE[i][1]);
+  if(ok){$("#wire-res").innerHTML='<p><span class="pill ok">Câblage correct</span> 5 V pour l\'alimentation, Trig en direct, Echo abaissé à 3,3 V, masse commune.</p>';markDone("m4w")}
+  else $("#wire-res").innerHTML=`<div class="note trap"><span class="label">À corriger</span>${(msg.length?msg:["Une broche n'est pas au bon endroit : compare avec le tableau de câblage ci-dessus."]).map(m=>`<p>${m}</p>`).join("")}</div>`;
+};
+
+/* ---------- partie 5 : checklist ---------- */
+const PRE=["La carte est débranchée pendant que je câble","VCC du composant va sur la tension lue dans la datasheet","Tous les GND sont reliés ensemble","Aucun signal de 5 V n'arrive sur une broche de l'ESP32","Chaque LED a sa résistance","J'ai suivi chaque fil du doigt, de la datasheet jusqu'à la carte","Rien d'autre n'est branché que le nouveau composant"];
+let pre=LS.get("pre",{});
+$("#pre").innerHTML=PRE.map((s,i)=>`<label class="check" for="p${i}"><input type="checkbox" id="p${i}" ${pre[i]?"checked":""}><span>${s}</span></label>`).join("");
+function preScore(){const n=PRE.filter((s,i)=>pre[i]).length;$("#pre-res").textContent=n===PRE.length?"Tout est vérifié : tu peux brancher l'USB.":`${n} / ${PRE.length} vérifiés`}
+PRE.forEach((s,i)=>$("#p"+i).onchange=e=>{pre[i]=e.target.checked;LS.set("pre",pre);preScore()});preScore();
+
+/* ---------- partie 7 ---------- */
+$("#m7-done").onclick=()=>{markDone("m7");$("#m7-done").textContent="C'est noté ✓"};
+if(done.m7)$("#m7-done").textContent="C'est noté ✓";
+
+/* ---------- partie 8 : fiche composant ---------- */
+const FIELDS=[["nom","Nom du composant","text"],["ref","Référence exacte","text"],["role","Que fait-il ?","text"],["type","Entrée ou sortie ?","sel",["","Entrée","Sortie","Les deux"]],
+ ["signal","Numérique, analogique, série ou bus ?","sel",["","Numérique","Analogique","Liaison série","Bus I2C","Autre"]],["tension","Tension d'alimentation","text"],["courant","Courant consommé","text"],
+ ["broches","Broches et câblage","area"],["resist","Résistances ou précautions","area"],["code","Bibliothèque ou formule","text"],["test","Résultat du test seul","area"],["lien","Lien vers la datasheet","text"]];
+const EX={
+ hc:{nom:"Capteur de distance à ultrasons",ref:"HC-SR04",role:"Mesure une distance de 2 à 400 cm",type:"Entrée",signal:"Numérique",tension:"5 V",courant:"environ 15 mA",broches:"VCC → 5 V (VIN) · Trig → GPIO 5 · Echo → GPIO 18 · GND → GND",resist:"ESP32 : pont diviseur sur Echo (R1 = 1 kΩ, R2 = 2 kΩ)",code:"distance = durée × 0,034 / 2 (pulseIn ou time_pulse_us)",test:"Main à 10 cm → environ 10 cm affiché",lien:""},
+ bt:{nom:"Module Bluetooth",ref:"HC-05",role:"Échange des messages sans fil avec un téléphone (environ 10 m)",type:"Les deux",signal:"Liaison série",tension:"5 V (signaux en 3,3 V)",courant:"environ 30 à 40 mA",broches:"VCC → 5 V · GND → GND · TXD → RX de la carte · RXD → TX de la carte (croisés)",resist:"Uno : pont diviseur sur RXD (R1 = 1 kΩ, R2 = 2 kΩ). ESP32 : en direct.",code:"Liaison série à 9600 bauds (SoftwareSerial ou UART)",test:"LED rapide → appairage code 1234 → LED lente → messages reçus au moniteur",lien:""}
+};
+let fiche=LS.get("fiche",{});
+$("#fiche").innerHTML=FIELDS.map(([k,l,t,o])=>`<div class="field"${t==="area"?' style="grid-column:1/-1"':""}><label for="f-${k}">${l}</label>${
+  t==="sel"?`<select id="f-${k}">${o.map(x=>`<option value="${x}">${x||"choisir…"}</option>`).join("")}</select>`:t==="area"?`<textarea id="f-${k}"></textarea>`:`<input type="text" id="f-${k}">`}</div>`).join("");
+function fillFiche(){FIELDS.forEach(([k])=>$("#f-"+k).value=fiche[k]||"")}
+FIELDS.forEach(([k])=>$("#f-"+k).addEventListener("input",e=>{fiche[k]=e.target.value;LS.set("fiche",fiche)}));
+$$("[data-fill]").forEach(b=>b.onclick=()=>{fiche=b.dataset.fill?{...EX[b.dataset.fill]}:{};LS.set("fiche",fiche);fillFiche()});
+$("#f-print").onclick=()=>{try{window.print()}catch(e){}};
+fillFiche();
+
+/* ---------- init ---------- */
+refreshDone();
+const start=(location.hash||"").slice(1)||LS.get("cur","accueil");
+show(mods.some(m=>m.id===start)?start:"accueil",false);
+})();
+</script>
+</body>
+</html>

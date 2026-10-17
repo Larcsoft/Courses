@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Atelier Arduino &amp; ESP32</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<!-- Styles communs : à modifier une seule fois pour toutes les pages -->
+<link rel="stylesheet" href="../../../commun/base.css">
+<link rel="stylesheet" href="../../../commun/themes/circuit-imprime.css">
+</head>
+<body>
+<header class="board">
+  <div class="board-in">
+    <div class="pins" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="board-top">
+      <div>
+        <p class="silk">Design PEI 5 · Niveau 1 · Découverte</p>
+        <h1>Atelier Arduino <span>&amp;</span> ESP32</h1>
+      </div>
+      <div class="lang" role="group" aria-label="Langage affiché">
+        <button id="lang-cpp" data-lang="cpp" aria-pressed="false">C/C++</button>
+        <button id="lang-both" data-lang="both" aria-pressed="true">Les deux</button>
+        <button id="lang-py" data-lang="py" aria-pressed="false">Python</button>
+      </div>
+    </div>
+    <div class="meter"><div class="bar" aria-hidden="true"><b id="meter-bar"></b></div><span id="meter-txt">0 / 10 modules terminés</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="rail" id="rail" aria-label="Modules du cours"></nav>
+  <main id="main">
+
+<!-- ================= 0 ACCUEIL ================= -->
+<section class="mod" id="accueil" data-title="Bienvenue">
+  <p class="eyebrow">Point de départ</p>
+  <h2>Donne vie à une carte électronique</h2>
+  <p class="lead">Dans quelques semaines, tu programmeras une ESP32 en Python pour créer un objet utile à l'environnement. Ce premier niveau t'apprend comment une carte perçoit le monde, comment elle réfléchit et comment elle te parle.</p>
+  <div class="grid2">
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">À la fin du niveau 1, tu sauras</p>
+      <div class="prose"><ul>
+        <li>expliquer ce qu'est un microcontrôleur et comparer deux cartes ;</li>
+        <li>distinguer un signal numérique d'un signal analogique ;</li>
+        <li>lire et écrire un programme avec <code>setup()</code> et <code>loop()</code> ;</li>
+        <li>faire clignoter une LED au rythme que tu choisis ;</li>
+        <li>utiliser la liaison série pour déboguer ton programme.</li>
+      </ul></div>
+    </div>
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">Comment utiliser ce cours</p>
+      <div class="prose">
+        <p>Le sélecteur en haut affiche le code en <b>C/C++</b> (Arduino), en <b>Python</b> (MicroPython pour ESP32) ou <b>les deux côte à côte</b>.</p>
+        <p>Chaque module contient des <b>labos</b> à manipuler et un <b>quiz</b>. Ta progression est gardée sur cet appareil.</p>
+        <p>Énoncé de recherche : <i>la technologie peut avoir un impact positif sur l'environnement.</i></p>
+      </div>
+    </div>
+  </div>
+  <h3>Le parcours complet : 5 niveaux</h3>
+  <div class="levels">
+    <div class="lvl cur"><span class="label">Niveau 1 · ici</span><h3>Découverte</h3><p>Carte, entrées/sorties, setup/loop, Blink, liaison série.</p></div>
+    <div class="lvl"><span class="label">Niveau 2</span><h3>Capteurs et actionneurs</h3><p>Boutons, conditions, potentiomètre, PWM, servomoteur, buzzer.</p></div>
+    <div class="lvl"><span class="label">Niveau 3</span><h3>Programmer proprement</h3><p>Fonctions, temps sans <code>delay</code>, machines à états, capteurs I2C, écran OLED.</p></div>
+    <div class="lvl"><span class="label">Niveau 4</span><h3>Objets connectés</h3><p>Wi-Fi, page web embarquée, MQTT, Bluetooth, économie d'énergie.</p></div>
+    <div class="lvl"><span class="label">Niveau 5</span><h3>Projet de design</h3><p>Cycle de design complet : cahier des charges, prototype, boîtier, tests.</p></div>
+  </div>
+  <div class="row"><button class="btn copper" data-go="next">Commencer le module 1</button></div>
+</section>
+
+<!-- ================= 1 CARTE ================= -->
+<section class="mod" id="m1" data-title="Une carte, c'est quoi ?" hidden>
+  <p class="eyebrow">Module 1</p>
+  <h2>Une carte programmable, c'est quoi ?</h2>
+  <div class="prose">
+    <p>Une carte Arduino est une <b>petite carte électronique programmable</b> qui sert à réaliser des projets interactifs : allumer des lumières, commander des moteurs, lire des capteurs. On la programme depuis un ordinateur, puis elle fonctionne seule.</p>
+    <p>Son cœur est un <b>microcontrôleur</b> : un ordinateur complet miniaturisé sur une seule puce, avec un processeur, de la mémoire et des broches d'entrée/sortie.</p>
+    <p><b>Exemple :</b> un robot qui suit une ligne noire. Un capteur voit la ligne, le programme décide, les moteurs corrigent la trajectoire.</p>
+  </div>
+  <div class="ets" aria-label="Entrées, traitement, sorties">
+    <div style="background:#2B8FC4">ENTRÉES<small>capteurs : bouton, lumière, température</small></div><span class="arrow">→</span>
+    <div style="background:#1F3A93">TRAITEMENT<small>le programme décide</small></div><span class="arrow">→</span>
+    <div style="background:#C46A22">SORTIES<small>actionneurs : LED, moteur, buzzer</small></div>
+  </div>
+  <div class="lab">
+    <p class="label">Labo · Trie les composants</p>
+    <p>Pour chaque composant, indique s'il s'agit d'une <b>entrée</b> (il informe la carte) ou d'une <b>sortie</b> (la carte le commande).</p>
+    <div class="sort" id="sort1"></div>
+    <p id="sort1-res" class="score" aria-live="polite"></p>
+  </div>
+  <div class="note tip"><span class="label">Le savais-tu ?</span><p>Arduino est né en 2005 à Ivrea, en Italie, pour aider des <b>étudiants en design</b> à créer des prototypes sans être ingénieurs. Ses plans sont libres (open source) : c'est pourquoi il existe tant de cartes compatibles.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m1"></div>
+</section>
+
+<!-- ================= 2 CARTES ================= -->
+<section class="mod" id="m2" data-title="Uno ou ESP32 ?" hidden>
+  <p class="eyebrow">Module 2</p>
+  <h2>Arduino Uno ou ESP32 ?</h2>
+  <p class="lead">Les deux cartes font le même métier. L'ESP32 est plus rapide, a beaucoup plus de mémoire et parle Wi-Fi et Bluetooth.</p>
+  <div class="scroll">
+    <table class="t">
+      <thead><tr><th>Caractéristique</th><th>Arduino Uno</th><th class="hl">ESP32 DevKit</th><th>Ce que ça veut dire</th></tr></thead>
+      <tbody>
+        <tr><td>Microcontrôleur</td><td>ATmega328P, 8 bits</td><td class="hl">ESP32 double cœur, 32 bits</td><td>Le « cerveau ».</td></tr>
+        <tr><td>Vitesse d'horloge</td><td>16 MHz</td><td class="hl">jusqu'à 240 MHz</td><td>Battements par seconde : 16 MHz = 16 millions.</td></tr>
+        <tr><td>Tension de fonctionnement</td><td>5 V</td><td class="hl"><b>3,3 V</b></td><td>Tension maximale sur les broches.</td></tr>
+        <tr><td>Entrées analogiques</td><td>6 (10 bits : 0 à 1023)</td><td class="hl">jusqu'à 18 (12 bits : 0 à 4095)</td><td>Voir module 3.</td></tr>
+        <tr><td>Mémoire flash</td><td>32 Ko</td><td class="hl">4 Mo</td><td>Le programme.</td></tr>
+        <tr><td>SRAM</td><td>2 Ko</td><td class="hl">520 Ko</td><td>Les variables.</td></tr>
+        <tr><td>EEPROM</td><td>1 Ko</td><td class="hl">émulée dans la flash</td><td>Les réglages à garder.</td></tr>
+        <tr><td>Ports série (UART)</td><td>1</td><td class="hl">3</td><td>Voir module 7.</td></tr>
+        <tr><td>Sans fil</td><td>aucun</td><td class="hl">Wi-Fi + Bluetooth</td><td>Objets connectés.</td></tr>
+        <tr><td>Langages</td><td>C/C++</td><td class="hl">C/C++ ou MicroPython</td><td>Ce cours montre les deux.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <details class="panel"><summary><b>Et les autres cartes Arduino ?</b> (Ethernet, Due, Yún)</summary>
+    <div class="prose" style="margin-top:10px"><ul>
+      <li><b>Arduino Ethernet</b> : un Uno avec prise réseau et lecteur de carte SD, mais sans port USB (il faut un adaptateur FTDI).</li>
+      <li><b>Arduino Due</b> : 84 MHz, 32 bits, 54 broches, 2 vraies sorties analogiques (DAC). Elle fonctionne en 3,3 V.</li>
+      <li><b>Arduino Yún</b> : un processeur Linux en plus, du Wi-Fi et de l'Ethernet.</li>
+    </ul></div>
+  </details>
+  <h3>Les trois mémoires</h3>
+  <div class="grid3">
+    <div class="mem" style="border-color:#1F3A93"><span class="label">le livre de recettes</span><h3>Flash</h3><p>Le programme. Non volatile : il reste après une coupure.</p></div>
+    <div class="mem" style="border-color:var(--copper)"><span class="label">le brouillon du cuisinier</span><h3>SRAM</h3><p>Les variables pendant que le programme tourne. Volatile : effacée à la coupure.</p></div>
+    <div class="mem" style="border-color:var(--ok)"><span class="label">le carnet de notes</span><h3>EEPROM</h3><p>Les réglages à garder (seuil, calibrage). Non volatile, environ 100 000 écritures.</p></div>
+  </div>
+  <div class="lab">
+    <p class="label">Labo · Où va cette donnée ?</p>
+    <div class="sort" id="sort2"></div>
+    <p id="sort2-res" class="score" aria-live="polite"></p>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>L'Uno fonctionne en 5 V, l'ESP32 en 3,3 V. Envoyer 5 V sur une broche de l'ESP32 peut la détruire. Vérifie toujours la tension d'un capteur avant de le brancher.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m2"></div>
+</section>
+
+<!-- ================= 3 NUM / ANA ================= -->
+<section class="mod" id="m3" data-title="Numérique ou analogique ?" hidden>
+  <p class="eyebrow">Module 3</p>
+  <h2>Numérique ou analogique ?</h2>
+  <div class="grid2">
+    <div class="panel"><h3>Numérique</h3><p>Comme un interrupteur : <b>deux états</b> seulement, HIGH (1) ou LOW (0). Exemple : un bouton-poussoir.</p></div>
+    <div class="panel"><h3>Analogique</h3><p>Comme un curseur de volume : une tension qui <b>varie en continu</b>. La carte la convertit en nombre. Exemple : un capteur de lumière.</p></div>
+  </div>
+  <div class="lab">
+    <p class="label">Labo A · Entrée numérique</p>
+    <div class="row">
+      <button class="btn" id="press">Maintiens-moi appuyé</button>
+      <span>La carte lit : <b class="mono" id="press-v" style="font-size:1.4rem">0</b></span>
+      <span class="pill bad" id="press-p">LOW · 0 V</span>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="label">Labo B · Entrée analogique et convertisseur (CAN)</p>
+    <div class="field"><label for="volt">Tension envoyée par le capteur</label><input type="range" id="volt" min="0" max="5" step="0.01" value="2.5"><output id="volt-o">2,50 V</output></div>
+    <div class="grid3">
+      <div class="stat"><span>Arduino Uno · analogRead()</span><b id="uno-v">512</b><span>sur 0 à 1023 (10 bits, 0 à 5 V)</span></div>
+      <div class="stat"><span>ESP32 · adc.read()</span><b id="esp-v">3103</b><span id="esp-s">sur 0 à 4095 (12 bits, 0 à 3,3 V)</span></div>
+      <div class="stat"><span>Calcul inverse (Uno)</span><b id="inv-v">2,50 V</b><span id="inv-s">512 × 5 / 1023</span></div>
+    </div>
+    <div class="field"><label for="bits">Résolution du CAN pour le dessin : <output id="bits-o">3 bits</output></label><input type="range" id="bits" min="1" max="10" value="3"></div>
+    <canvas id="adc" height="240" aria-label="Courbe en escalier du convertisseur"></canvas>
+    <p style="color:var(--muted);font-size:.9rem">Plus le CAN a de bits, plus les marches sont petites et plus la mesure est précise. 10 bits donnent 1024 marches de 4,9 mV.</p>
+  </div>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>void setup() {
+  pinMode(4, INPUT_PULLUP);   // bouton sur la broche 4
+  Serial.begin(9600);
+}
+
+void loop() {
+  int etat = digitalRead(4);       // 0 ou 1
+  int valeur = analogRead(A0);     // 0 à 1023
+  float tension = valeur * 5.0 / 1023;
+  Serial.print("Bouton : ");
+  Serial.print(etat);
+  Serial.print(" | Tension : ");
+  Serial.println(tension);
+  delay(500);
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import Pin, ADC
+import time
+
+bouton = Pin(4, Pin.IN, Pin.PULL_UP)   # entrée numérique
+pot = ADC(Pin(34))                      # entrée analogique
+pot.atten(ADC.ATTN_11DB)                # plage 0 à 3,3 V
+
+while True:
+    etat = bouton.value()               # 0 ou 1
+    valeur = pot.read()                 # 0 à 4095
+    tension = valeur * 3.3 / 4095
+    print("Bouton :", etat, "| Tension :", round(tension, 2))
+    time.sleep(0.5)</pre></figure>
+  </div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m3"></div>
+</section>
+
+<!-- ================= 4 PWM ================= -->
+<section class="mod" id="m4" data-title="La PWM" hidden>
+  <p class="eyebrow">Module 4</p>
+  <h2>La PWM : varier sans sortie analogique</h2>
+  <p class="lead">Une broche numérique ne connaît que 0 et 5 V. Pour faire varier la luminosité d'une LED, on l'allume et on l'éteint des centaines de fois par seconde. Le pourcentage de temps allumé s'appelle le <b>rapport cyclique</b>.</p>
+  <div class="lab">
+    <p class="label">Labo · Règle le rapport cyclique</p>
+    <div class="row" style="align-items:center">
+      <div class="field" style="flex:1 1 240px"><label for="duty">Rapport cyclique</label><input type="range" id="duty" min="0" max="100" value="25"><output id="duty-o">25 %</output></div>
+      <div class="led on" id="pwm-led" aria-label="LED"></div>
+    </div>
+    <canvas id="pwm" height="150" aria-label="Signal PWM"></canvas>
+    <div class="grid3">
+      <div class="stat"><span>Arduino : analogWrite(9, …)</span><b id="pwm-a">64</b><span>valeur de 0 à 255</span></div>
+      <div class="stat"><span>ESP32 : duty_u16(…)</span><b id="pwm-e">16384</b><span>valeur de 0 à 65535</span></div>
+      <div class="stat"><span>Tension moyenne (Uno)</span><b id="pwm-m">1,25 V</b><span>5 V × rapport cyclique</span></div>
+    </div>
+  </div>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>void setup() {
+  pinMode(9, OUTPUT);       // broche 9 : elle a le symbole ~ (PWM)
+}
+
+void loop() {
+  analogWrite(9, 64);       // 25 % de luminosité
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import Pin, PWM
+
+led = PWM(Pin(2), freq=1000)   # 1000 impulsions par seconde
+led.duty_u16(16384)            # 25 % de 65535</pre></figure>
+  </div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m4"></div>
+</section>
+
+<!-- ================= 5 SETUP LOOP ================= -->
+<section class="mod" id="m5" data-title="setup() et loop()" hidden>
+  <p class="eyebrow">Module 5</p>
+  <h2>Les deux parties d'un programme</h2>
+  <div class="grid2">
+    <div class="panel"><h3><code>setup()</code></h3><p>S'exécute <b>une seule fois</b>, à la mise sous tension ou après un reset. On y configure les broches et on ouvre la liaison série.</p></div>
+    <div class="panel"><h3><code>loop()</code></h3><p>Se répète <b>à l'infini</b> après <code>setup()</code>. On y met les tâches répétitives : allumer, attendre, lire un capteur…</p></div>
+  </div>
+  <div class="note py"><span class="label">Et en Python ?</span><p>Pas de <code>setup()</code> ni de <code>loop()</code> obligatoires, mais la même logique : ce qui est écrit <b>avant</b> <code>while True:</code> joue le rôle de setup ; ce qui est <b>indenté dessous</b> joue le rôle de loop. Les blocs sont délimités par l'indentation, pas par des accolades.</p></div>
+  <div class="lab">
+    <p class="label">Labo · Exécute le programme pas à pas</p>
+    <div class="row">
+      <button class="btn" id="st-next">Pas suivant</button>
+      <button class="btn ghost" id="st-play">Lecture auto</button>
+      <button class="btn ghost" id="st-reset">Recommencer</button>
+    </div>
+    <div class="code-pair">
+      <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre id="st-cpp">void setup() {
+  pinMode(13, OUTPUT);              // broche 13 en sortie
+  Serial.begin(9600);               // ouvrir la liaison série
+  Serial.println("Démarrage !");
+}
+
+void loop() {
+  digitalWrite(13, HIGH);           // allumer la LED
+  Serial.println("LED allumée");
+  delay(1000);                      // attendre 1 s
+  digitalWrite(13, LOW);            // éteindre la LED
+  Serial.println("LED éteinte");
+  delay(1000);                      // attendre 1 s
+}</pre></figure>
+      <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre id="st-py">from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)               # GPIO 2 en sortie
+print("Démarrage !")
+
+while True:
+    led.value(1)                    # allumer la LED
+    print("LED allumée")
+    time.sleep(1)                   # attendre 1 s
+    led.value(0)                    # éteindre la LED
+    print("LED éteinte")
+    time.sleep(1)                   # attendre 1 s</pre></figure>
+    </div>
+    <div class="grid2">
+      <div class="panel" style="grid-template-columns:auto 1fr;align-items:center">
+        <div class="led" id="st-led"></div>
+        <div><p id="st-exp" style="font-weight:700">Appuie sur « Pas suivant » pour mettre la carte sous tension.</p>
+        <p style="color:var(--muted);font-size:.9rem">Temps simulé : <b class="mono" id="st-t">0 ms</b> · tours de loop : <b class="mono" id="st-n">0</b></p></div>
+      </div>
+      <div class="field"><span class="label" style="color:var(--muted)">Moniteur série</span><div class="monitor" id="st-mon" aria-live="polite"></div></div>
+    </div>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>En C/C++, les commentaires commencent par <code>//</code> et chaque instruction finit par <code>;</code>. En Python, les commentaires commencent par <code>#</code> et il n'y a pas de point-virgule.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m5"></div>
+</section>
+
+<!-- ================= 6 BLINK ================= -->
+<section class="mod" id="m6" data-title="Labo Blink" hidden>
+  <p class="eyebrow">Module 6</p>
+  <h2>Labo Blink : à toi de régler le rythme</h2>
+  <p class="lead">La LED clignote parce que la carte <b>commande ses broches</b> (<code>digitalWrite</code>), <b>attend</b> (<code>delay</code>) et <b>répète</b> (<code>loop</code>). Change les durées : le code et le chronogramme se mettent à jour.</p>
+  <div class="lab">
+    <p class="label">Labo · Ton clignotant</p>
+    <div class="grid2">
+      <div class="field"><label for="b-on">Durée allumée</label><input type="range" id="b-on" min="100" max="2000" step="50" value="1000"><output id="b-on-o">1000 ms</output></div>
+      <div class="field"><label for="b-off">Durée éteinte</label><input type="range" id="b-off" min="100" max="2000" step="50" value="1000"><output id="b-off-o">1000 ms</output></div>
+    </div>
+    <label class="row" for="b-msg" style="flex-wrap:nowrap"><input type="checkbox" id="b-msg" checked> Afficher un message dans le moniteur série</label>
+    <div class="row"><div class="led" id="b-led"></div>
+      <div class="grid3" style="flex:1 1 300px">
+        <div class="stat"><span>Période</span><b id="b-T">2000 ms</b></div>
+        <div class="stat"><span>Fréquence</span><b id="b-f">0,5 Hz</b></div>
+        <div class="stat"><span>Rapport cyclique</span><b id="b-d">50 %</b></div>
+      </div></div>
+    <canvas id="chrono" height="150" aria-label="Chronogramme"></canvas>
+    <div class="code-pair">
+      <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre id="b-cpp"></pre></figure>
+      <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre id="b-py"></pre></figure>
+    </div>
+    <div class="panel">
+      <p class="label" style="color:var(--copper)">Défis : règle les curseurs pour les réussir</p>
+      <div id="defis" style="display:grid;gap:6px"></div>
+    </div>
+  </div>
+  <div class="note tip"><span class="label">Pour aller plus loin : la résistance de la LED</span><p>Une LED externe a besoin d'une résistance en série. Loi d'Ohm : R = (U − U<sub>LED</sub>) / I. Uno : (5 − 2) / 0,015 ≈ 200 Ω. ESP32 : (3,3 − 2) / 0,010 ≈ 130 Ω. Une résistance de 220 Ω convient aux deux.</p></div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Si tu oublies le deuxième <code>delay()</code>, la LED se rallume quelques microsecondes après s'être éteinte : elle semble toujours allumée.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m6"></div>
+</section>
+
+<!-- ================= 7 SERIE ================= -->
+<section class="mod" id="m7" data-title="La liaison série" hidden>
+  <p class="eyebrow">Module 7</p>
+  <h2>La liaison série : la carte te parle</h2>
+  <p class="lead">La liaison série envoie les données <b>bit par bit, l'un après l'autre, sur un seul fil</b>. Comme une conversation où l'on ne dirait qu'un mot à la fois.</p>
+  <div class="lab">
+    <p class="label">Labo · Regarde un message voyager</p>
+    <div class="grid2">
+      <div class="field"><label for="u-txt">Ton message</label><input type="text" id="u-txt" maxlength="16" value="Allo"></div>
+      <div class="field"><label for="u-baud">Vitesse (bauds)</label><select id="u-baud"><option>300</option><option selected>9600</option><option>115200</option></select></div>
+    </div>
+    <div class="row" id="u-chars" aria-label="Choisis un caractère"></div>
+    <p id="u-info" class="mono" style="font-size:.9rem"></p>
+    <canvas id="uart" height="180" aria-label="Trame série"></canvas>
+    <div class="grid3">
+      <div class="stat"><span>Durée d'un bit</span><b id="u-bit"></b><span>1 / vitesse</span></div>
+      <div class="stat"><span>Caractères par seconde</span><b id="u-cps"></b><span>10 bits par caractère</span></div>
+      <div class="stat"><span>Durée de ton message</span><b id="u-msg"></b><span id="u-bytes"></span></div>
+    </div>
+  </div>
+  <div class="prose">
+    <h3>À quoi sert-elle ?</h3>
+    <ul>
+      <li><b>Téléverser</b> le programme depuis l'ordinateur.</li>
+      <li><b>Déboguer</b> : afficher des messages et des valeurs dans le moniteur série.</li>
+      <li><b>Communiquer</b> avec un autre appareil (module Bluetooth, autre carte) par les broches TX et RX.</li>
+      <li><b>Dialoguer avec des capteurs</b> série et commander des actionneurs.</li>
+    </ul>
+    <p>Sur l'Uno, elle passe par le <b>port USB</b> et par les broches <b>0 (RX)</b> et <b>1 (TX)</b>. Les petites LED TX et RX de la carte clignotent quand des données circulent.</p>
+  </div>
+  <div class="lab">
+    <p class="label">Labo · Branche deux cartes</p>
+    <p>Complète le câblage entre la carte A et un module Bluetooth (carte B).</p>
+    <div class="grid3" id="wire"></div>
+    <p id="wire-res" class="score" aria-live="polite"></p>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Sur l'Uno, l'USB et les broches 0/1 partagent le même UART. Débranche tout module des broches 0 et 1 avant de téléverser.</p></div>
+  <div class="note py"><span class="label">Et sur l'ESP32 ?</span><p>L'ESP32 a 3 UART. L'UART 0 sert à l'USB et à <code>print()</code>. Pour un module externe, on utilise l'UART 2 (GPIO 17 = TX, GPIO 16 = RX).</p></div>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>void setup() {
+  Serial.begin(9600);                  // USB + broches 0/1
+}
+
+void loop() {
+  Serial.println("Bonjour le module !");
+  if (Serial.available() &gt; 0) {        // des données sont arrivées ?
+    char c = Serial.read();
+    Serial.print("Reçu : ");
+    Serial.println(c);
+  }
+  delay(1000);
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import UART
+import time
+
+uart = UART(2, baudrate=9600, tx=17, rx=16)
+
+while True:
+    uart.write("Bonjour le module !\n")  # envoyer par TX
+    if uart.any():                        # des données sur RX ?
+        print("Reçu :", uart.read())
+    time.sleep(1)</pre></figure>
+  </div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m7"></div>
+</section>
+
+<!-- ================= 8 MONITEUR ================= -->
+<section class="mod" id="m8" data-title="Le moniteur série" hidden>
+  <p class="eyebrow">Module 8</p>
+  <h2>Le moniteur série, ton meilleur ami pour déboguer</h2>
+  <p class="lead">Le moniteur série est une fenêtre qui affiche <b>en temps réel</b> les messages envoyés par la carte. Il permet de vérifier ce que fait vraiment ton programme.</p>
+  <div class="panel">
+    <div class="tabs" role="tablist" id="mon-tabs">
+      <button role="tab" id="tab-ide" aria-selected="true" data-p="p-ide">IDE Arduino</button>
+      <button role="tab" id="tab-tk" aria-selected="false" data-p="p-tk">Tinkercad</button>
+      <button role="tab" id="tab-th" aria-selected="false" data-p="p-th">Thonny (ESP32)</button>
+      <button role="tab" id="tab-wk" aria-selected="false" data-p="p-wk">Wokwi (ESP32)</button>
+    </div>
+    <div id="p-ide" class="prose"><ol style="margin:0;padding-left:1.2rem;display:grid;gap:4px"><li>Téléverse ton programme sur la carte.</li><li>Ouvre <b>Outils › Moniteur série</b>, ou clique sur la <b>loupe</b> en haut à droite (Ctrl + Maj + M).</li><li>Choisis en bas la <b>même vitesse</b> que dans <code>Serial.begin()</code>.</li></ol></div>
+    <div id="p-tk" class="prose" hidden><ol style="margin:0;padding-left:1.2rem;display:grid;gap:4px"><li>Clique sur <b>Code</b> (mode Texte ou Blocs + Texte).</li><li>En bas du panneau Code, clique sur <b>Moniteur série</b>.</li><li>Lance la simulation : les messages apparaissent.</li></ol></div>
+    <div id="p-th" class="prose" hidden><ol style="margin:0;padding-left:1.2rem;display:grid;gap:4px"><li>Branche l'ESP32 et choisis l'interpréteur <b>MicroPython (ESP32)</b>.</li><li>Clique sur <b>Exécuter</b> (flèche verte).</li><li>Les <code>print()</code> s'affichent dans la <b>Console (Shell)</b> en bas. Pas de vitesse à régler : c'est 115 200 bauds.</li></ol></div>
+    <div id="p-wk" class="prose" hidden><ol style="margin:0;padding-left:1.2rem;display:grid;gap:4px"><li>Sur <a href="https://wokwi.com" target="_blank" rel="noopener">wokwi.com</a>, crée un projet <b>ESP32 MicroPython</b>.</li><li>Lance la simulation.</li><li>La console série s'affiche sous le schéma. Idéal pour s'entraîner sans matériel.</li></ol></div>
+  </div>
+  <div class="lab">
+    <p class="label">Labo · Le piège des bauds</p>
+    <p>Le programme contient <code>Serial.begin(9600);</code>. Règle la vitesse du moniteur et observe.</p>
+    <div class="field" style="max-width:260px"><label for="mon-baud">Vitesse du moniteur</label><select id="mon-baud"><option>300</option><option>4800</option><option selected>9600</option><option>115200</option></select></div>
+    <div class="monitor" id="mon-out"></div>
+    <p id="mon-res" aria-live="polite"></p>
+  </div>
+  <h3>print ou println ?</h3>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>int temperature = 23;
+Serial.print("Température : ");   // pas de retour à la ligne
+Serial.print(temperature);        // la valeur de la variable
+Serial.println(" °C");            // retour à la ligne (ln = line)
+// Affiche : Température : 23 °C</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>temperature = 23
+print("Température :", temperature, "°C")   # une seule instruction
+print(f"Température : {temperature} °C")    # variante f-string</pre></figure>
+  </div>
+  <div class="note trap"><span class="label">Attention, piège</span><p>Place le message <b>juste après</b> le changement d'état de la LED, pas après le <code>delay()</code> : sinon il s'affiche avec une seconde de retard.</p></div>
+  <h3>Quiz</h3>
+  <div class="quiz" data-quiz="m8"></div>
+</section>
+
+<!-- ================= 9 MISSION ================= -->
+<section class="mod" id="m9" data-title="Mission lampe" hidden>
+  <p class="eyebrow">Module 9 · Mission</p>
+  <h2>La lampe éco-intelligente</h2>
+  <p class="lead">Combien de lumières restent allumées en plein jour ? Avec ce que tu sais déjà, tu peux concevoir une lampe qui ne s'allume que lorsqu'il fait sombre.</p>
+  <div class="lab">
+    <p class="label">Labo · Simule ta lampe</p>
+    <div class="grid2">
+      <div class="field"><label for="l-lum">Luminosité mesurée par le capteur</label><input type="range" id="l-lum" min="0" max="4095" value="900"><output id="l-lum-o">900</output></div>
+      <div class="field"><label for="l-seuil">Seuil choisi</label><input type="range" id="l-seuil" min="0" max="4095" value="1500"><output id="l-seuil-o">1500</output></div>
+    </div>
+    <div class="grid2">
+      <div class="sky" id="l-sky"><div class="lamp" id="l-lamp" aria-label="Lampe"></div></div>
+      <div class="field"><span class="label" style="color:var(--muted)">Console</span><div class="monitor" id="l-mon" style="height:120px"></div></div>
+    </div>
+    <p>Matériel : photorésistance + résistance de 10 kΩ sur le GPIO 34 (A0 sur l'Uno), LED + 220 Ω sur le GPIO 2 (broche 13 sur l'Uno).</p>
+  </div>
+  <div class="code-pair">
+    <figure class="code" data-l="cpp"><figcaption><button>Copier</button></figcaption><pre>const int SEUIL = 400;            // Uno : 0 à 1023
+
+void setup() {
+  pinMode(13, OUTPUT);             // la lampe
+  Serial.begin(9600);
+}
+
+void loop() {
+  int lumiere = analogRead(A0);    // le capteur
+  if (lumiere &lt; SEUIL) {           // il fait sombre ?
+    digitalWrite(13, HIGH);
+    Serial.println("Sombre : lampe allumée");
+  } else {
+    digitalWrite(13, LOW);         // on économise l'énergie
+    Serial.println("Clair : lampe éteinte");
+  }
+  delay(1000);
+}</pre></figure>
+    <figure class="code" data-l="py"><figcaption><button>Copier</button></figcaption><pre>from machine import Pin, ADC
+import time
+
+led = Pin(2, Pin.OUT)              # la lampe
+ldr = ADC(Pin(34))                 # le capteur de lumière
+ldr.atten(ADC.ATTN_11DB)
+SEUIL = 1500                       # ESP32 : 0 à 4095
+
+while True:
+    lumiere = ldr.read()
+    if lumiere &lt; SEUIL:             # il fait sombre ?
+        led.value(1)
+        print(lumiere, ": sombre, lampe allumée")
+    else:
+        led.value(0)               # on économise l'énergie
+        print(lumiere, ": clair, lampe éteinte")
+    time.sleep(1)</pre></figure>
+  </div>
+  <div class="lab">
+    <p class="label">Calculatrice · L'énergie économisée</p>
+    <div class="grid2">
+      <div class="field"><label for="e-w">Puissance de l'ampoule</label><input type="range" id="e-w" min="1" max="60" value="10"><output id="e-w-o">10 W</output></div>
+      <div class="field"><label for="e-h">Heures sombres par jour</label><input type="range" id="e-h" min="0" max="24" value="15"><output id="e-h-o">15 h</output></div>
+    </div>
+    <div class="grid3">
+      <div class="stat"><span>Toujours allumée</span><b id="e-a"></b><span>par jour</span></div>
+      <div class="stat"><span>Lampe intelligente</span><b id="e-b"></b><span>par jour</span></div>
+      <div class="stat"><span>Économie</span><b id="e-c" style="color:var(--ok)"></b><span id="e-d"></span></div>
+    </div>
+  </div>
+  <div class="note tip"><span class="label">Défis pour le niveau 2</span><p>Ajoute un capteur de présence pour n'allumer que s'il y a quelqu'un. Fais varier la luminosité avec la PWM au lieu de tout ou rien.</p></div>
+  <div class="row"><button class="btn copper" id="m9-done">J'ai terminé la mission</button></div>
+</section>
+
+<!-- ================= 10 BILAN ================= -->
+<section class="mod" id="m10" data-title="Bilan" hidden>
+  <p class="eyebrow">Module 10</p>
+  <h2>Bilan du niveau 1</h2>
+  <h3>Quiz final</h3>
+  <div class="quiz" data-quiz="m10"></div>
+  <h3>Aide-mémoire C/C++ ↔ MicroPython</h3>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Action</th><th>Arduino (C/C++)</th><th>ESP32 (MicroPython)</th></tr></thead>
+    <tbody>
+      <tr><td>Broche en sortie</td><td><code>pinMode(13, OUTPUT);</code></td><td><code>led = Pin(2, Pin.OUT)</code></td></tr>
+      <tr><td>Broche en entrée</td><td><code>pinMode(4, INPUT_PULLUP);</code></td><td><code>bt = Pin(4, Pin.IN, Pin.PULL_UP)</code></td></tr>
+      <tr><td>Écrire 1 / 0</td><td><code>digitalWrite(13, HIGH);</code></td><td><code>led.value(1)</code></td></tr>
+      <tr><td>Lire numérique</td><td><code>digitalRead(4)</code></td><td><code>bt.value()</code></td></tr>
+      <tr><td>Lire analogique</td><td><code>analogRead(A0)</code> → 0 à 1023</td><td><code>ADC(Pin(34)).read()</code> → 0 à 4095</td></tr>
+      <tr><td>Attendre 1 s</td><td><code>delay(1000);</code></td><td><code>time.sleep(1)</code></td></tr>
+      <tr><td>Liaison série</td><td><code>Serial.begin(9600);</code></td><td>automatique (115 200 bauds)</td></tr>
+      <tr><td>Afficher</td><td><code>Serial.println("Bonjour");</code></td><td><code>print("Bonjour")</code></td></tr>
+      <tr><td>Répéter</td><td><code>void loop() { … }</code></td><td><code>while True:</code></td></tr>
+      <tr><td>Commentaire</td><td><code>// …</code></td><td><code># …</code></td></tr>
+      <tr><td>Bloc</td><td>accolades <code>{ }</code> et <code>;</code></td><td>indentation (4 espaces)</td></tr>
+    </tbody></table></div>
+  <h3>Auto-évaluation</h3>
+  <div class="panel" id="self"></div>
+  <div class="panel" style="background:var(--copper-soft);border-color:var(--copper)">
+    <p class="label" style="color:var(--copper-ink)">Prochaine étape · Niveau 2</p>
+    <p>Capteurs et actionneurs : conditions <code>if</code>, boutons, potentiomètre, servomoteur et buzzer, toujours en C/C++ et en Python.</p>
+  </div>
+</section>
+
+    <div class="foot-nav" id="foot">
+      <button class="btn ghost" id="prev">← Précédent</button>
+      <button class="btn" id="next">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+const LS = {get(k,d){try{const v=localStorage.getItem("aae1:"+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+            set(k,v){try{localStorage.setItem("aae1:"+k,JSON.stringify(v))}catch(e){}}};
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const fr = (n,d=2)=>n.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const css = v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+/* ---------- langage ---------- */
+function setLang(l){document.documentElement.dataset.lang=l;$$(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===l));LS.set("lang",l)}
+$$(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+setLang(LS.get("lang","both"));
+
+/* ---------- coloration du code ---------- */
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function hl(code,lang){
+  const re = lang==="py"
+    ? /(#.*$)|("(?:[^"\\]|\\.)*")|\b(\d+(?:\.\d+)?)\b|\b(from|import|while|True|False|if|else|elif|for|in|range|def|return|not|and|or|print)\b/gm
+    : /(\/\/.*$)|("(?:[^"\\]|\\.)*")|\b(\d+(?:\.\d+)?)\b|\b(void|int|float|char|const|if|else|for|while|return|HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP|true|false)\b/gm;
+  let out="",last=0;
+  for(const m of code.matchAll(re)){out+=esc(code.slice(last,m.index));const c=m[1]?"c":m[2]?"s":m[3]?"n":"k";out+=`<span class="t-${c}">${esc(m[0])}</span>`;last=m.index+m[0].length}
+  return out+esc(code.slice(last));
+}
+function render(pre,code){
+  const lang=pre.closest(".code").dataset.l;
+  if(code===undefined) code=pre.textContent;
+  pre.dataset.raw=code;
+  pre.innerHTML=code.split("\n").map((l,i)=>`<span class="ln" data-i="${i}">${hl(l,lang)||" "}</span>`).join("");
+}
+$$("figure.code pre").forEach(p=>render(p));
+document.addEventListener("click",e=>{
+  const b=e.target.closest("figure.code figcaption button"); if(!b)return;
+  const raw=b.closest("figure").querySelector("pre").dataset.raw;
+  const done=()=>{b.textContent="Copié";setTimeout(()=>b.textContent="Copier",1400)};
+  try{navigator.clipboard.writeText(raw).then(done,()=>{selectPre(b);})}catch(err){selectPre(b)}
+});
+function selectPre(b){const r=document.createRange();r.selectNodeContents(b.closest("figure").querySelector("pre"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Ctrl+C"}
+
+/* ---------- navigation ---------- */
+const mods=$$("section.mod");
+const rail=$("#rail");
+let done=LS.get("done",{});
+mods.forEach((m,i)=>{
+  const b=document.createElement("button");b.dataset.id=m.id;
+  b.innerHTML=`<span class="n">${i===0?"··":String(i).padStart(2,"0")}</span><span class="t">${m.dataset.title}</span><span class="ck" aria-hidden="true"></span>`;
+  b.setAttribute("aria-label",m.dataset.title);
+  b.onclick=()=>show(m.id);rail.appendChild(b);
+});
+let cur=0;
+function show(id,scroll=true){
+  const i=Math.max(0,mods.findIndex(m=>m.id===id));cur=i;
+  mods.forEach((m,j)=>m.hidden=j!==i);
+  $$("#rail button").forEach((b,j)=>b.setAttribute("aria-current",j===i));
+  $("#prev").disabled=i===0;$("#next").disabled=i===mods.length-1;
+  $("#next").textContent=i===mods.length-1?"Fin du niveau 1":"Suivant →";
+  try{history.replaceState(null,"","#"+mods[i].id)}catch(e){}
+  LS.set("cur",mods[i].id);
+  if(scroll) window.scrollTo({top:0,behavior:"smooth"});
+  redrawAll();
+}
+$("#prev").onclick=()=>show(mods[cur-1].id);
+$("#next").onclick=()=>show(mods[cur+1].id);
+$$("[data-go=next]").forEach(b=>b.onclick=()=>show(mods[cur+1].id));
+function markDone(id){done[id]=true;LS.set("done",done);refreshDone()}
+function refreshDone(){
+  $$("#rail button").forEach(b=>b.classList.toggle("done",!!done[b.dataset.id]));
+  const n=mods.slice(1).filter(m=>done[m.id]).length;
+  $("#meter-bar").style.width=(n/10*100)+"%";$("#meter-txt").textContent=`${n} / 10 modules terminés`;
+}
+
+/* ---------- quiz ---------- */
+const QUIZ={
+ m1:[{q:"Qu'est-ce qu'un microcontrôleur ?",o:["Un écran pour afficher le code","Un ordinateur complet miniaturisé sur une seule puce","Un câble USB spécial","Un logiciel de programmation"],a:1,w:"Il réunit processeur, mémoire et entrées/sorties sur une seule puce."},
+     {q:"Un capteur de température est…",o:["une entrée","une sortie","une mémoire"],a:0,w:"Il informe la carte : c'est une entrée."},
+     {q:"Une fois programmée, la carte Arduino…",o:["a toujours besoin de l'IDE ouvert","fonctionne seule si elle est alimentée","s'efface quand on débranche l'USB"],a:1,w:"Le programme est stocké dans la mémoire flash, qui est non volatile."}],
+ m2:[{q:"Quelle carte possède le Wi-Fi intégré ?",o:["Arduino Uno","ESP32","Arduino Due"],a:1,w:"L'ESP32 intègre Wi-Fi et Bluetooth."},
+     {q:"Où est stocké le programme téléversé ?",o:["En SRAM","En mémoire flash","En EEPROM"],a:1,w:"La flash garde le programme même hors tension."},
+     {q:"Tu branches un capteur qui envoie 5 V sur une broche de l'ESP32. Que risques-tu ?",o:["Rien, c'est prévu","Une mesure plus précise","D'abîmer la carte, qui fonctionne en 3,3 V"],a:2,w:"Les broches de l'ESP32 ne supportent pas plus de 3,3 V."}],
+ m3:[{q:"Combien d'états possède une entrée numérique ?",o:["2","1024","Une infinité"],a:0,w:"HIGH (1) ou LOW (0)."},
+     {q:"Sur l'Uno, analogRead() renvoie 1023. Quelle est la tension ?",o:["0 V","2,5 V","5 V"],a:2,w:"1023 est la valeur maximale : 1023 × 5 / 1023 = 5 V."},
+     {q:"Pourquoi l'ESP32 renvoie-t-il jusqu'à 4095 ?",o:["Son CAN a 12 bits (2¹² = 4096 valeurs)","Il fonctionne en 40 V","C'est une erreur"],a:0,w:"12 bits donnent 4096 valeurs, de 0 à 4095."}],
+ m4:[{q:"La PWM fait varier…",o:["la fréquence du Wi-Fi","le pourcentage de temps où la broche est à l'état haut","la taille de la mémoire"],a:1,w:"C'est le rapport cyclique."},
+     {q:"analogWrite(9, 255) sur l'Uno correspond à…",o:["0 %","50 %","100 %"],a:2,w:"255 est la valeur maximale : la broche reste toujours à l'état haut."}],
+ m5:[{q:"Combien de fois s'exécute setup() ?",o:["Une seule fois au démarrage","À chaque tour de loop()","Jamais"],a:0,w:"setup() sert aux réglages initiaux."},
+     {q:"En MicroPython, quel est l'équivalent de loop() ?",o:["def loop():","while True:","import loop"],a:1,w:"Le bloc indenté sous while True: se répète à l'infini."},
+     {q:"Comment commence un commentaire en C/C++ ?",o:["#","//","--"],a:1,w:"// en C/C++, # en Python."}],
+ m6:[{q:"LED allumée 500 ms, éteinte 500 ms : quelle fréquence ?",o:["0,5 Hz","1 Hz","2 Hz"],a:1,w:"Période = 1000 ms = 1 s, donc 1 Hz."},
+     {q:"delay(1000) attend…",o:["1000 secondes","1 seconde","1 milliseconde"],a:1,w:"delay() compte en millisecondes."}],
+ m7:[{q:"Comment relie-t-on deux appareils en série ?",o:["TX sur TX, RX sur RX","TX sur RX, RX sur TX, et GND commun","Seulement GND"],a:1,w:"On croise : ce que l'un émet, l'autre le reçoit."},
+     {q:"Combien de bits faut-il pour envoyer un caractère (START + 8 bits + STOP) ?",o:["8","10","16"],a:1,w:"1 + 8 + 1 = 10 bits."},
+     {q:"Sur l'Uno, quelles broches utilise la liaison série ?",o:["0 (RX) et 1 (TX)","12 et 13","A0 et A1"],a:0,w:"Ce sont aussi celles de l'USB : à libérer pendant le téléversement."}],
+ m8:[{q:"Le moniteur affiche des caractères bizarres. Cause probable ?",o:["La LED est grillée","La vitesse du moniteur est différente de Serial.begin()","Le programme est trop long"],a:1,w:"Émetteur et récepteur doivent utiliser la même vitesse."},
+     {q:"Quelle différence entre print et println ?",o:["println passe à la ligne après le message","println est plus rapide","Aucune"],a:0,w:"ln = line : retour à la ligne."}],
+ m10:[{q:"Un bouton-poussoir se branche sur…",o:["une entrée numérique","une sortie analogique","la broche 5 V uniquement"],a:0,w:"Deux états : appuyé ou relâché."},
+     {q:"Quelle mémoire perd ses données à la coupure ?",o:["Flash","SRAM","EEPROM"],a:1,w:"La SRAM est volatile."},
+     {q:"Dans quelle fonction place-t-on Serial.begin(9600) ?",o:["setup()","loop()","Aucune"],a:0,w:"On ouvre la liaison une seule fois, au démarrage."},
+     {q:"time.sleep(0.5) en MicroPython équivaut à…",o:["delay(5)","delay(500)","delay(0.5)"],a:1,w:"0,5 s = 500 ms."},
+     {q:"À 9600 bauds, combien de caractères par seconde environ ?",o:["96","960","9600"],a:1,w:"9600 bits/s ÷ 10 bits par caractère = 960."},
+     {q:"Quelle ligne allume la LED intégrée d'une ESP32 DevKit ?",o:["led = Pin(2, Pin.OUT) puis led.value(1)","digitalWrite(2)","print(LED)"],a:0,w:"On configure le GPIO 2 en sortie, puis on écrit 1."},
+     {q:"La lampe intelligente s'allume quand…",o:["la mesure est au-dessus du seuil","la mesure est en dessous du seuil","toutes les secondes"],a:1,w:"Une mesure faible signifie qu'il fait sombre."},
+     {q:"Pourquoi une résistance en série avec une LED ?",o:["Pour limiter le courant et protéger la LED","Pour la faire clignoter","Pour mesurer la lumière"],a:0,w:"Sans elle, le courant serait trop fort."}]
+};
+let qans=LS.get("quiz",{});
+$$(".quiz").forEach(box=>{
+  const id=box.dataset.quiz, qs=QUIZ[id]; qans[id]=qans[id]||{};
+  qs.forEach((q,i)=>{
+    const d=document.createElement("div");d.className="q";
+    d.innerHTML=`<p class="qt">${i+1}. ${q.q}</p><div class="opts">${q.o.map((o,j)=>`<button data-j="${j}">${o}</button>`).join("")}</div><p class="why" hidden></p>`;
+    const btns=[...d.querySelectorAll(".opts button")];
+    const apply=j=>{btns.forEach((b,k)=>{b.disabled=true;if(k===q.a)b.classList.add("good");else if(k===j)b.classList.add("wrong")});
+      const w=d.querySelector(".why");w.hidden=false;w.innerHTML=(j===q.a?"<b style='color:var(--ok)'>Bravo.</b> ":"<b style='color:var(--bad)'>Pas tout à fait.</b> ")+q.w};
+    btns.forEach(b=>b.onclick=()=>{const j=+b.dataset.j;qans[id][i]=j;LS.set("quiz",qans);apply(j);score()});
+    if(qans[id][i]!==undefined) apply(qans[id][i]);
+    box.appendChild(d);
+  });
+  const s=document.createElement("div");s.className="row";
+  s.innerHTML=`<p class="score" aria-live="polite"></p><button class="btn ghost" hidden>Recommencer le quiz</button>`;box.appendChild(s);
+  s.querySelector("button").onclick=()=>{qans[id]={};LS.set("quiz",qans);
+    box.querySelectorAll(".q").forEach(q=>{q.querySelectorAll(".opts button").forEach(b=>{b.disabled=false;b.classList.remove("good","wrong")});q.querySelector(".why").hidden=true});
+    s.querySelector("p").textContent="";s.querySelector("button").hidden=true;s.classList.remove("win")};
+  function score(){
+    const n=Object.keys(qans[id]).length, ok=qs.filter((q,i)=>qans[id][i]===q.a).length;
+    if(n===qs.length){s.querySelector("p").textContent=`Score : ${ok} / ${qs.length}`+(ok===qs.length?" · parfait !":ok>=qs.length/2?" · bien joué":" · relis le module et réessaie");
+      s.querySelector("button").hidden=false;s.classList.add("win");markDone(box.closest("section").id)}
+  }
+  score();
+});
+
+/* ---------- jeux de tri ---------- */
+function sortGame(el,res,items,cats){
+  let st={};
+  items.forEach((it,i)=>{
+    const d=document.createElement("div");d.className="it";
+    d.innerHTML=`<span>${it[0]}</span><span class="row">${cats.map(c=>`<button>${c}</button>`).join("")}</span>`;
+    d.querySelectorAll("button").forEach(b=>b.onclick=()=>{st[i]=b.textContent===it[1];d.className="it "+(st[i]?"ok":"ko");
+      d.querySelector("span").innerHTML=it[0]+(st[i]?"":` <small style="color:var(--bad)">→ réponse : ${it[1]}</small>`);
+      const n=Object.keys(st).length;if(n===items.length){const k=Object.values(st).filter(Boolean).length;$(res).textContent=`${k} / ${items.length} bonnes réponses`}});
+    $(el).appendChild(d);
+  });
+}
+sortGame("#sort1","#sort1-res",[["Bouton-poussoir","Entrée"],["LED","Sortie"],["Capteur de lumière","Entrée"],["Moteur","Sortie"],["Buzzer","Sortie"],["Thermomètre","Entrée"],["Écran","Sortie"],["Détecteur de présence","Entrée"]],["Entrée","Sortie"]);
+sortGame("#sort2","#sort2-res",[["Le programme Blink","Flash"],["Le nombre d'appuis sur un bouton","SRAM"],["Un seuil de température à garder après extinction","EEPROM"],["La valeur lue sur le capteur à l'instant","SRAM"]],["Flash","SRAM","EEPROM"]);
+
+/* ---------- canvas util ---------- */
+function ctx2(c){const r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1,h=+c.getAttribute("height");c.width=Math.max(300,r.width)*dpr;c.height=h*dpr;c.style.height=h+"px";const x=c.getContext("2d");x.setTransform(dpr,0,0,dpr,0,0);return [x,Math.max(300,r.width),h]}
+
+/* ---------- module 3 ---------- */
+const press=$("#press");
+const setP=v=>{$("#press-v").textContent=v;const p=$("#press-p");p.textContent=v?"HIGH · 5 V":"LOW · 0 V";p.className="pill "+(v?"ok":"bad")};
+["pointerdown","keydown"].forEach(e=>press.addEventListener(e,ev=>{if(ev.type==="keydown"&&ev.key!==" "&&ev.key!=="Enter")return;setP(1)}));
+["pointerup","pointerleave","keyup","blur"].forEach(e=>press.addEventListener(e,()=>setP(0)));
+function adc(){
+  const V=+$("#volt").value,b=+$("#bits").value;
+  $("#volt-o").textContent=fr(V)+" V";$("#bits-o").textContent=b+" bit"+(b>1?"s":"")+` (${2**b} marches)`;
+  const u=Math.round(V*1023/5);$("#uno-v").textContent=u;$("#inv-v").textContent=fr(u*5/1023)+" V";$("#inv-s").textContent=`${u} × 5 / 1023`;
+  if(V>3.3){$("#esp-v").innerHTML='<span class="pill bad">DANGER</span>';$("#esp-s").textContent="plus de 3,3 V : risque de casser l'ESP32"}
+  else{$("#esp-v").textContent=Math.round(V*4095/3.3);$("#esp-s").textContent="sur 0 à 4095 (12 bits, 0 à 3,3 V)"}
+  const [x,w,h]=ctx2($("#adc")),L=40,R=12,T=12,B=30,pw=w-L-R,ph=h-T-B,n=2**b;
+  x.clearRect(0,0,w,h);x.font="12px "+css("--f-mono");x.fillStyle=css("--muted");x.strokeStyle=css("--line");x.lineWidth=1;
+  for(let v=0;v<=5;v++){const X=L+v/5*pw;x.beginPath();x.moveTo(X,T);x.lineTo(X,T+ph);x.stroke();x.fillText(v+" V",X-10,h-10)}
+  x.fillText(n-1,4,T+10);x.fillText("0",4,T+ph);
+  x.setLineDash([5,4]);x.strokeStyle=css("--copper");x.beginPath();x.moveTo(L,T+ph);x.lineTo(L+pw,T);x.stroke();x.setLineDash([]);
+  x.strokeStyle=css("--ink");x.lineWidth=2;x.beginPath();
+  for(let k=0;k<n;k++){const x0=L+k/n*pw,x1=L+(k+1)/n*pw,y=T+ph-(k/(n-1))*ph;k?x.lineTo(x0,y):x.moveTo(x0,y);x.lineTo(x1,y)}x.stroke();
+  const k=Math.min(n-1,Math.floor(V/5*n)),X=L+V/5*pw,Y=T+ph-(k/(n-1))*ph;
+  x.fillStyle=css("--bad");x.beginPath();x.arc(X,Y,6,0,7);x.fill();x.fillStyle=css("--ink");x.font="bold 13px "+css("--f-mono");x.fillText("lu : "+k,Math.min(X+10,w-70),Math.max(Y-8,T+12));
+}
+["volt","bits"].forEach(i=>$("#"+i).oninput=adc);
+
+/* ---------- module 4 ---------- */
+function pwm(){
+  const d=+$("#duty").value/100;$("#duty-o").textContent=Math.round(d*100)+" %";
+  $("#pwm-a").textContent=Math.round(d*255);$("#pwm-e").textContent=Math.round(d*65535);$("#pwm-m").textContent=fr(5*d)+" V";
+  const led=$("#pwm-led");led.classList.toggle("on",d>0);led.style.opacity=d>0?(0.25+0.75*d):1;
+  const [x,w,h]=ctx2($("#pwm")),T=20,B=20,ph=h-T-B,per=(w-20)/5;
+  x.clearRect(0,0,w,h);x.fillStyle=css("--copper-soft");x.strokeStyle=css("--ink");x.lineWidth=2;
+  x.beginPath();x.moveTo(10,T+ph);
+  for(let i=0;i<5;i++){const a=10+i*per,on=per*d;x.fillRect(a,T,on,ph);x.lineTo(a,T+ph);if(d>0){x.lineTo(a,T);x.lineTo(a+on,T)}x.lineTo(a+on,T+ph);x.lineTo(a+per,T+ph)}x.stroke();
+  x.setLineDash([6,4]);x.strokeStyle=css("--copper");x.beginPath();const ym=T+ph-d*ph;x.moveTo(10,ym);x.lineTo(w-10,ym);x.stroke();x.setLineDash([]);
+  x.fillStyle=css("--copper-ink");x.font="12px "+css("--f-mono");x.fillText("moyenne "+fr(5*d)+" V",w-130,Math.max(14,ym-6));
+}
+$("#duty").oninput=pwm;
+
+/* ---------- module 5 : pas à pas ---------- */
+const STEPS=[
+ {c:[0],p:[0,1],e:"Mise sous tension : on entre dans setup(). En Python, on importe les outils.",t:0},
+ {c:[1],p:[3],e:"La broche de la LED est configurée en sortie.",t:0},
+ {c:[2],p:[],e:"La liaison série s'ouvre à 9600 bauds. En Python, rien à faire : elle est déjà ouverte.",t:0},
+ {c:[3],p:[4],e:"Message de démarrage envoyé au moniteur.",t:0,m:"Démarrage !"},
+ {c:[7],p:[7],e:"loop() commence : la LED s'allume.",t:0,led:1},
+ {c:[8],p:[8],e:"Message envoyé : la LED est allumée.",t:0,m:"LED allumée"},
+ {c:[9],p:[9],e:"Pause de 1000 ms. La LED reste allumée.",t:1000},
+ {c:[10],p:[10],e:"La LED s'éteint.",t:0,led:0},
+ {c:[11],p:[11],e:"Message envoyé : la LED est éteinte.",t:0,m:"LED éteinte"},
+ {c:[12],p:[12],e:"Pause de 1000 ms… puis loop() recommence au début.",t:1000,end:1}
+];
+let si=-1,simT=0,turns=0,timer=null;
+function stepRender(s){
+  $$("#st-cpp .ln,#st-py .ln").forEach(l=>l.classList.remove("on"));
+  if(!s)return;
+  s.c.forEach(i=>$(`#st-cpp .ln[data-i="${i}"]`).classList.add("on"));s.p.forEach(i=>$(`#st-py .ln[data-i="${i}"]`).classList.add("on"));
+  $("#st-exp").textContent=s.e;
+}
+function step(){
+  si++; if(si>=STEPS.length){si=4;turns++}
+  const s=STEPS[si];simT+=s.t;
+  if(s.led!==undefined)$("#st-led").classList.toggle("on",!!s.led);
+  if(s.m){const mo=$("#st-mon");mo.textContent+=`[${String(simT).padStart(5," ")} ms] ${s.m}\n`;mo.scrollTop=mo.scrollHeight}
+  $("#st-t").textContent=simT+" ms";$("#st-n").textContent=turns+(si>=4?1:0);
+  stepRender(s);
+}
+$("#st-next").onclick=step;
+$("#st-play").onclick=()=>{if(timer){clearInterval(timer);timer=null;$("#st-play").textContent="Lecture auto"}else{timer=setInterval(step,700);$("#st-play").textContent="Pause"}};
+$("#st-reset").onclick=()=>{si=-1;simT=0;turns=0;$("#st-mon").textContent="";$("#st-led").classList.remove("on");$("#st-t").textContent="0 ms";$("#st-n").textContent="0";stepRender(null);$("#st-exp").textContent="Appuie sur « Pas suivant » pour mettre la carte sous tension."};
+
+/* ---------- module 6 : blink ---------- */
+let bt=null,bstate=false;
+const DEFIS=[
+ {t:"Clignoter à 2 Hz, de façon régulière (autant allumée qu'éteinte)",ok:(a,b)=>a===250&&b===250},
+ {t:"Un flash court de signalisation : 100 ms allumée, 900 ms éteinte",ok:(a,b)=>a===100&&b===900},
+ {t:"Période de 2 s avec un rapport cyclique de 25 %",ok:(a,b)=>a===500&&b===1500}
+];
+let defiOk=LS.get("defis",{});
+function blink(){
+  const a=+$("#b-on").value,b=+$("#b-off").value,msg=$("#b-msg").checked,P=a+b;
+  $("#b-on-o").textContent=a+" ms";$("#b-off-o").textContent=b+" ms";
+  $("#b-T").textContent=P+" ms";$("#b-f").textContent=fr(1000/P)+" Hz";$("#b-d").textContent=Math.round(a/P*100)+" %";
+  const sec=v=>v%1000===0?String(v/1000):null;
+  const pyWait=v=>sec(v)!==null?`time.sleep(${sec(v)})`:`time.sleep_ms(${v})`;
+  render($("#b-cpp"),`void setup() {
+  pinMode(13, OUTPUT);           // broche 13 en sortie${msg?"\n  Serial.begin(9600);            // ouvrir la liaison série":""}
+}
+
+void loop() {
+  digitalWrite(13, HIGH);        // allumer${msg?'\n  Serial.println("LED allumée");':""}
+  delay(${a});${" ".repeat(Math.max(1,33-("  delay("+a+");").length))}// attendre ${a} ms
+  digitalWrite(13, LOW);         // éteindre${msg?'\n  Serial.println("LED éteinte");':""}
+  delay(${b});${" ".repeat(Math.max(1,33-("  delay("+b+");").length))}// attendre ${b} ms
+}`);
+  render($("#b-py"),`from machine import Pin
+import time
+
+led = Pin(2, Pin.OUT)            # GPIO 2 en sortie
+
+while True:
+    led.value(1)                 # allumer${msg?'\n    print("LED allumée")':""}
+    ${pyWait(a)}
+    led.value(0)                 # éteindre${msg?'\n    print("LED éteinte")':""}
+    ${pyWait(b)}`);
+  const [x,w,h]=ctx2($("#chrono")),L=60,R=10,T=20,B=28,pw=w-L-R,ph=h-T-B,span=5000;
+  x.clearRect(0,0,w,h);x.font="12px "+css("--f-mono");x.fillStyle=css("--muted");
+  x.fillText("HIGH",8,T+8);x.fillText("LOW",8,T+ph);
+  for(let s=0;s<=5;s++){const X=L+s/5*pw;x.fillText(s+" s",Math.min(X-8,w-26),h-8);x.strokeStyle=css("--line");x.lineWidth=1;x.beginPath();x.moveTo(X,T);x.lineTo(X,T+ph);x.stroke()}
+  x.strokeStyle=css("--ink");x.lineWidth=2;x.beginPath();x.moveTo(L,T);let t=0;
+  while(t<span){const t1=Math.min(t+a,span);x.fillStyle=css("--copper-soft");x.fillRect(L+t/span*pw,T,(t1-t)/span*pw,ph);t=t1;if(t>=span)break;t+=b}
+  t=0;x.beginPath();x.moveTo(L,T+ph);
+  while(t<span){let X=L+t/span*pw;x.lineTo(X,T);const t1=Math.min(t+a,span);X=L+t1/span*pw;x.lineTo(X,T);if(t1>=span)break;x.lineTo(X,T+ph);const t2=Math.min(t1+b,span);x.lineTo(L+t2/span*pw,T+ph);t=t2}
+  x.stroke();
+  $("#defis").innerHTML=DEFIS.map((d,i)=>{const ok=d.ok(a,b)||defiOk[i];if(d.ok(a,b)&&!defiOk[i]){defiOk[i]=true;LS.set("defis",defiOk)}
+    return `<div class="row"><span class="pill ${ok?"ok":"warn"}">${ok?"réussi":"à faire"}</span><span>${d.t}</span></div>`}).join("");
+  clearTimeout(bt);bstate=false;const led=$("#b-led");
+  const tick=()=>{bstate=!bstate;led.classList.toggle("on",bstate);bt=setTimeout(tick,bstate?a:b)};
+  if(!$("#m6").hidden)tick();
+}
+["b-on","b-off","b-msg"].forEach(i=>$("#"+i).addEventListener("input",blink));
+
+/* ---------- module 7 : UART ---------- */
+let uIdx=0;
+function uart(){
+  const txt=$("#u-txt").value||"A",baud=+$("#u-baud").value;
+  uIdx=Math.min(uIdx,txt.length-1);
+  $("#u-chars").innerHTML=[...txt].map((c,i)=>`<button class="btn ${i===uIdx?"copper":"ghost"}" data-i="${i}" style="padding:.25rem .7rem;font-family:var(--f-mono)">${c===" "?"␣":esc(c)}</button>`).join("");
+  $$("#u-chars button").forEach(b=>b.onclick=()=>{uIdx=+b.dataset.i;uart()});
+  const bytes=new TextEncoder().encode(txt);const ch=[...txt][uIdx];const cb=new TextEncoder().encode(ch);const byte=cb[0];
+  const bin=byte.toString(2).padStart(8,"0");
+  $("#u-info").innerHTML=`« ${esc(ch)} » → code ${byte}${cb.length>1?` (1er octet sur ${cb.length} : les lettres accentuées prennent 2 octets)`:""} → binaire ${bin} → envoyé du bit de poids faible au bit de poids fort`;
+  const bits=[1,0,...bin.split("").reverse().map(Number),1,1],lab=["repos","START","b0","b1","b2","b3","b4","b5","b6","b7","STOP","repos"];
+  const [x,w,h]=ctx2($("#uart")),L=10,pw=w-20,cw=pw/bits.length,T=30,ph=80;
+  x.clearRect(0,0,w,h);x.font="11px "+css("--f-mono");x.textAlign="center";
+  bits.forEach((b,i)=>{const X=L+i*cw;x.fillStyle=lab[i]==="START"||lab[i]==="STOP"?css("--copper-soft"):lab[i][0]==="b"?css("--ok-soft"):css("--paper");x.fillRect(X+1,T+ph+14,cw-2,24);x.fillStyle=css("--ink");x.fillText(lab[i],X+cw/2,T+ph+30);
+    if(lab[i][0]==="b"){x.fillStyle=css("--copper");x.font="bold 14px "+css("--f-mono");x.fillText(b,X+cw/2,T-10);x.font="11px "+css("--f-mono")}});
+  x.strokeStyle=css("--ink");x.lineWidth=2.5;x.beginPath();
+  bits.forEach((b,i)=>{const y=b?T:T+ph,X=L+i*cw;i?x.lineTo(X,y):x.moveTo(X,y);x.lineTo(X+cw,y)});x.stroke();x.textAlign="start";
+  x.fillStyle=css("--muted");x.fillText("1",0,T+4);x.fillText("0",0,T+ph+4);
+  const tb=1/baud;$("#u-bit").textContent=tb>=1e-3?fr(tb*1000,2)+" ms":fr(tb*1e6,1)+" µs";
+  $("#u-cps").textContent=Math.round(baud/10).toLocaleString("fr-FR");
+  const tm=bytes.length*10/baud;$("#u-msg").textContent=tm>=1?fr(tm,2)+" s":fr(tm*1000,1)+" ms";$("#u-bytes").textContent=`${bytes.length} octet${bytes.length>1?"s":""} × 10 bits / ${baud} bauds`;
+}
+$("#u-txt").oninput=uart;$("#u-baud").onchange=uart;
+// câblage
+const WIRE=[["TX de la carte A","RX"],["RX de la carte A","TX"],["GND de la carte A","GND"]];
+$("#wire").innerHTML=WIRE.map((w,i)=>`<div class="field"><label for="w${i}">${w[0]} → carte B :</label><select id="w${i}"><option value="">choisir…</option><option>TX</option><option>RX</option><option>GND</option></select></div>`).join("");
+WIRE.forEach((w,i)=>$("#w"+i).onchange=()=>{const v=WIRE.map((w,j)=>$("#w"+j).value);if(v.some(x=>!x))return;const ok=v.every((x,j)=>x===WIRE[j][1]);
+  $("#wire-res").innerHTML=ok?'<span style="color:var(--ok)">Câblage correct : TX et RX sont croisés, la masse est commune.</span>':'<span style="color:var(--bad)">Pas encore : ce qu\'une carte émet (TX), l\'autre doit le recevoir (RX).</span>'});
+
+/* ---------- module 8 ---------- */
+$$("#mon-tabs button").forEach(b=>b.onclick=()=>{$$("#mon-tabs button").forEach(x=>{x.setAttribute("aria-selected",x===b);$("#"+x.dataset.p).hidden=x!==b})});
+function mon(){
+  const v=+$("#mon-baud").value,ok=v===9600,g="⸮x▒⸮?ÿ⸮Ç⸮⸮▒~⸮";
+  let s="";for(let i=0;i<4;i++)s+=ok?(i%2?"LED éteinte\n":"LED allumée\n"):[...g].sort(()=>Math.random()-.5).join("").slice(0,9+i)+"\n";
+  $("#mon-out").textContent=s;
+  $("#mon-res").innerHTML=ok?'<span class="pill ok">Vitesses identiques</span> Le texte est lisible.':`<span class="pill bad">${v} ≠ 9600</span> Le moniteur découpe les bits au mauvais rythme : les caractères sont faux.`;
+}
+$("#mon-baud").onchange=mon;
+
+/* ---------- module 9 ---------- */
+function lamp(){
+  const l=+$("#l-lum").value,s=+$("#l-seuil").value,on=l<s;
+  $("#l-lum-o").textContent=l;$("#l-seuil-o").textContent=s;$("#l-lamp").classList.toggle("on",on);
+  const k=l/4095;$("#l-sky").style.background=`linear-gradient(${css("--paper")},${css("--paper")}), rgb(${Math.round(20+k*150)},${Math.round(30+k*180)},${Math.round(60+k*190)})`;
+  $("#l-sky").style.background=`rgb(${Math.round(18+k*150)},${Math.round(28+k*185)},${Math.round(58+k*192)})`;
+  const m=$("#l-mon");m.textContent=(m.textContent+`${l} : ${on?"sombre, lampe allumée":"clair, lampe éteinte"}\n`).split("\n").slice(-7).join("\n");m.scrollTop=m.scrollHeight;
+}
+["l-lum","l-seuil"].forEach(i=>$("#"+i).oninput=lamp);
+function energy(){
+  const W=+$("#e-w").value,H=+$("#e-h").value,a=W*24,b=W*H;
+  $("#e-w-o").textContent=W+" W";$("#e-h-o").textContent=H+" h";
+  $("#e-a").textContent=a+" Wh";$("#e-b").textContent=b+" Wh";$("#e-c").textContent=fr((a-b)/a*100,1)+" %";$("#e-d").textContent=`soit ${fr((a-b)*365/1000,1)} kWh par an`;
+}
+["e-w","e-h"].forEach(i=>$("#"+i).oninput=energy);
+$("#m9-done").onclick=()=>{markDone("m9");$("#m9-done").textContent="Mission accomplie ✓"};
+
+/* ---------- auto-évaluation ---------- */
+const SELF=["Je sais définir un microcontrôleur","Je sais comparer l'Uno et l'ESP32","Je distingue numérique et analogique","Je sais expliquer setup() et loop()","Je sais écrire le programme Blink en C/C++","Je sais écrire le programme Blink en MicroPython","Je sais utiliser le moniteur série pour déboguer","Je sais relier deux appareils en TX/RX"];
+let self=LS.get("self",{});
+$("#self").innerHTML=SELF.map((s,i)=>`<label class="check" for="s${i}"><input type="checkbox" id="s${i}" ${self[i]?"checked":""}><span>${s}</span></label>`).join("");
+SELF.forEach((s,i)=>$("#s"+i).onchange=e=>{self[i]=e.target.checked;LS.set("self",self)});
+
+/* ---------- init ---------- */
+function redrawAll(){adc();pwm();blink();uart();mon();lamp();energy()}
+refreshDone();
+const start=(location.hash||"").slice(1)||LS.get("cur","accueil");
+show(mods.some(m=>m.id===start)?start:"accueil",false);
+let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(redrawAll,150)});
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",redrawAll)}catch(e){}
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+})();
+</script>
+</body>
+</html>
